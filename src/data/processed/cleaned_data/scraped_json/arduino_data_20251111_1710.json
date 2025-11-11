@@ -1,0 +1,42 @@
+{
+  "devices": [
+    {
+      "DeviceID": 3,
+      "DeviceName": "Nano",
+      "DeviceType": "Microcontroller Board",
+      "ImageURL": "https://docs.arduino.cc/static/d07cc69ff52812b0c3a2605d4f08ce6e/image.svg",
+      "SourceURL": "https://docs.arduino.cc/hardware/nano"
+    },
+    {
+      "DeviceID": 4,
+      "DeviceName": "Mega 2560 Rev3",
+      "DeviceType": "Microcontroller Board",
+      "ImageURL": "https://docs.arduino.cc/static/8891fa4c3fff65f2186a38601788212c/image.svg",
+      "SourceURL": "https://docs.arduino.cc/hardware/mega-2560"
+    },
+    {
+      "DeviceID": 5,
+      "DeviceName": "Leonardo",
+      "DeviceType": "Microcontroller Board",
+      "ImageURL": "https://docs.arduino.cc/static/4c88ffc380ff7cbc0e7340c00870501f/image.svg",
+      "SourceURL": "https://docs.arduino.cc/hardware/leonardo"
+    },
+    {
+      "DeviceID": 6,
+      "DeviceName": "Due",
+      "DeviceType": "Microcontroller Board",
+      "ImageURL": "https://docs.arduino.cc/static/84daf36b46ecd3cd350e798e23902127/image.svg",
+      "SourceURL": "https://docs.arduino.cc/hardware/due"
+    },
+    {
+      "DeviceID": 7,
+      "DeviceName": "Micro",
+      "DeviceType": "Microcontroller Board",
+      "ImageURL": "https://docs.arduino.cc/static/aa174e665128524e84baf74749c532e6/image.svg",
+      "SourceURL": "https://docs.arduino.cc/hardware/micro"
+    }
+  ],
+  "components": [],
+  "guides": [],
+  "steps": []
+}
