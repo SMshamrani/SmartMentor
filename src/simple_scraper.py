@@ -22,7 +22,7 @@ def scrape_arduino_boards():
     # Direct links to known Arduino boards
     board_urls = [
         '/hardware/uno-r4',
-        '/hardware/uno-r3', 
+        '/hardware/uno-rev3',  # Updated to correct UNO R3 URL
         '/hardware/nano',
         '/hardware/mega-2560',
         '/hardware/leonardo',
@@ -49,14 +49,25 @@ def scrape_arduino_boards():
                 if img and img.get('src'):
                     image_url = urljoin(base_url, img['src'])
                 
-                devices.append({
+                # For UNO R3, get additional details
+                if 'uno-rev3' in board_path:
+                    components = extract_uno_components(soup)
+                    guides = extract_uno_guides(soup, board_url)
+                else:
+                    components = []
+                    guides = []
+                
+                device_data = {
                     'DeviceID': i + 1,
                     'DeviceName': device_name,
                     'DeviceType': 'Microcontroller Board',
                     'ImageURL': image_url,
-                    'SourceURL': board_url
-                })
+                    'SourceURL': board_url,
+                    'components': components,
+                    'guides': guides
+                }
                 
+                devices.append(device_data)
                 print(f"Found: {device_name}")
                 
             time.sleep(1)  # Respect the website
@@ -66,15 +77,118 @@ def scrape_arduino_boards():
     
     return devices
 
+def extract_uno_components(soup):
+    """Extract UNO R3 components and specifications"""
+    components = []
+    spec_keywords = ['specification', 'feature', 'technical', 'pinout', 'component', 'memory', 'power']
+    
+    headers = soup.find_all(['h1', 'h2', 'h3', 'h4'])
+    for header in headers:
+        header_text = header.get_text(strip=True).lower()
+        if any(keyword in header_text for keyword in spec_keywords):
+            content = header.find_next(['p', 'ul', 'table'])
+            if content:
+                component_id = len(components) + 1
+                components.append({
+                    'ComponentID': component_id,
+                    'ComponentName': header.get_text(strip=True),
+                    'Description': content.get_text(strip=True)[:500]
+                })
+    
+    return components
+
+def extract_uno_guides(soup, board_url):
+    """Extract UNO R3 guides and steps"""
+    guides = []
+    
+    # Look for tutorial content in the page
+    content_areas = soup.find_all(['article', 'section', 'div'], class_=True)
+    
+    for i, area in enumerate(content_areas):
+        area_text = area.get_text(strip=True)
+        if len(area_text) > 200:  # Substantial content
+            guide_id = len(guides) + 1
+            
+            # Create guide title
+            guide_title = f"UNO R3 Guide {i+1}"
+            title_elem = area.find(['h1', 'h2', 'h3'])
+            if title_elem:
+                guide_title = title_elem.get_text(strip=True)
+            
+            guide_data = {
+                'GuideID': guide_id,
+                'Title': guide_title,
+                'DateCreated': datetime.now().strftime('%Y-%m-%d'),
+                'GuideURL': board_url,
+                'steps': extract_guide_steps(area, guide_id)
+            }
+            
+            guides.append(guide_data)
+    
+    return guides
+
+def extract_guide_steps(content_area, guide_id):
+    """Extract step-by-step instructions from content"""
+    steps = []
+    
+    # Look for ordered lists
+    ordered_lists = content_area.find_all('ol')
+    for ol in ordered_lists:
+        list_items = ol.find_all('li')
+        for i, item in enumerate(list_items):
+            step_text = item.get_text(strip=True)
+            if len(step_text) > 10:
+                steps.append({
+                    'StepID': len(steps) + 1,
+                    'StepNumber': i + 1,
+                    'Description': step_text[:300]
+                })
+    
+    # Look for step-like paragraphs
+    paragraphs = content_area.find_all('p')
+    step_keywords = ['step', 'connect', 'install', 'upload', 'open', 'select', 'plug', 'wire']
+    
+    for p in paragraphs:
+        p_text = p.get_text(strip=True).lower()
+        if any(keyword in p_text for keyword in step_keywords) and len(p_text) > 20:
+            steps.append({
+                'StepID': len(steps) + 1,
+                'StepNumber': len(steps) + 1,
+                'Description': p.get_text(strip=True)[:300]
+            })
+    
+    return steps
+
 def save_data(devices):
     """Save data to JSON file"""
     os.makedirs('data/raw/scraped_json', exist_ok=True)
     
+    # Flatten the data structure for database compatibility
+    all_components = []
+    all_guides = []
+    all_steps = []
+    
+    for device in devices:
+        # Add device ID to components
+        for component in device.get('components', []):
+            component['DeviceID'] = device['DeviceID']
+            all_components.append(component)
+        
+        # Add device ID to guides and steps
+        for guide in device.get('guides', []):
+            guide['DeviceID'] = device['DeviceID']
+            all_guides.append(guide)
+            
+            # Add guide ID to steps
+            for step in guide.get('steps', []):
+                step['GuideID'] = guide['GuideID']
+                all_steps.append(step)
+    
     data = {
         'devices': devices,
-        'components': [],
-        'guides': [],
-        'steps': []
+        'components': all_components,
+        'guides': all_guides,
+        'steps': all_steps
     }
     
     filename = f"data/raw/scraped_json/arduino_data_{datetime.now().strftime('%Y%m%d_%H%M')}.json"
@@ -168,9 +282,15 @@ def main():
         download_images(data_file)
         
         print(f"Completed! Found {len(devices)} boards")
-        print("Boards found:")
-        for device in devices:
-            print(f"  - {device['DeviceName']}")
+        
+        # Show UNO R3 details if found
+        uno_device = next((device for device in devices if 'uno' in device['DeviceName'].lower()), None)
+        if uno_device:
+            print(f"\nUNO R3 Details:")
+            print(f"Components: {len(uno_device.get('components', []))}")
+            print(f"Guides: {len(uno_device.get('guides', []))}")
+            total_steps = sum(len(guide.get('steps', [])) for guide in uno_device.get('guides', []))
+            print(f"Total Steps: {total_steps}")
     else:
         print("No boards found")
 
