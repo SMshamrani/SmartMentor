@@ -6,6 +6,7 @@ beautifulsoup4==4.12.2
 lxml==4.9.3
 selenium==4.15.2
 
+
 # Data Processing
 pandas==2.2.0                  
 numpy==1.26.0                  
@@ -23,4 +24,4 @@ python-dotenv==1.0.0
 python-dotenv==1.0.0
 
 # Testing
-pytest==7.4.3
+pytest==7.4.3urllib3==2.0.7
