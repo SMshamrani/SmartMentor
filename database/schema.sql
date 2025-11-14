@@ -58,7 +58,7 @@ INSERT INTO Devices (DeviceName, DeviceType, ImageURL) VALUES
 ('Arduino Uno', 'Microcontroller Board', 'https://example.com/arduino-uno.jpg'),
 ('Arduino Nano', 'Microcontroller Board', 'https://example.com/arduino-nano.jpg');
 
--- UserProgress table (track user progress per step per device)
+-- UserProgress table 
 CREATE TABLE UserProgress (
     ProgressID SERIAL PRIMARY KEY,
     UserID INTEGER REFERENCES Users(UserID) ON DELETE CASCADE,
