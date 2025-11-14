@@ -57,3 +57,19 @@ CREATE INDEX idx_steps_step_number ON Steps(GuideID, StepNumber);
 INSERT INTO Devices (DeviceName, DeviceType, ImageURL) VALUES 
 ('Arduino Uno', 'Microcontroller Board', 'https://example.com/arduino-uno.jpg'),
 ('Arduino Nano', 'Microcontroller Board', 'https://example.com/arduino-nano.jpg');
+
+-- UserProgress table (track user progress per step per device)
+CREATE TABLE UserProgress (
+    ProgressID SERIAL PRIMARY KEY,
+    UserID INTEGER REFERENCES Users(UserID) ON DELETE CASCADE,
+    DeviceID INTEGER REFERENCES Devices(DeviceID) ON DELETE CASCADE,
+    StepID INTEGER REFERENCES Steps(StepID) ON DELETE CASCADE,
+    ProgressPercent INT DEFAULT 0,
+    Status VARCHAR(20) DEFAULT 'started',
+    UpdatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Indexes for better performance
+CREATE INDEX idx_userprogress_user_id ON UserProgress(UserID);
+CREATE INDEX idx_userprogress_device_id ON UserProgress(DeviceID);
+CREATE INDEX idx_userprogress_step_id ON UserProgress(StepID);
