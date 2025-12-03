@@ -7,6 +7,21 @@ lxml==4.9.3
 selenium==4.15.2
 
 
+# requirements.txt
+openai>=1.0.0
+serpapi
+pillow
+requests
+selenium
+python-dotenv
+pytest==7.4.3
+urllib3==2.0.7
+beautifulsoup4
+lxml
+psycopg2-binary  # إضافة لاتصال PostgreSQL
+googlesearch-python
+
+
 # Data Processing
 pandas==2.2.0                  
 numpy==1.26.0                  
@@ -24,4 +39,35 @@ python-dotenv==1.0.0
 python-dotenv==1.0.0
 
 # Testing
-pytest==7.4.3urllib3==2.0.7
+pytest==7.4.3
+urllib3==2.0.7
+
+
+
+
+
+# Core dependencies
+requests>=2.31.0
+Pillow>=10.0.0
+numpy>=1.24.0
+pandas>=2.0.0
+
+# Web scraping and search
+googlesearch-python>=1.2.3
+beautifulsoup4>=4.12.0
+lxml>=4.9.0
+
+# Data processing
+python-dotenv>=1.0.0
+openai>=1.0.0  # Optional for AI classification
+
+# Image processing
+opencv-python>=4.8.0  # Optional for advanced image analysis
+scikit-image>=0.22.0  # Optional for image features
+
+# Database (optional)
+psycopg2-binary>=2.9.9
+
+# Utilities
+tqdm>=4.66.0  # For progress bars
+colorama>=0.4.6  # For colored output

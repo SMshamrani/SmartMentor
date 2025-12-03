@@ -1,0 +1,30 @@
+[
+    {
+        "component": "Arduino Uno",
+        "type": "board",
+        "description": "The most common Arduino board with 14 digital I/O pins and 6 analog inputs",
+        "category": "Pin Definitions",
+        "source": "scraper"
+    },
+    {
+        "component": "LED Blink Tutorial",
+        "type": "tutorial",
+        "description": "Learn how to make an LED blink with Arduino programming using digitalWrite function",
+        "category": "Programming Instructions",
+        "source": "scraper"
+    },
+    {
+        "component": "Resistor",
+        "type": "component",
+        "description": "Electronic component used to limit current in circuits, essential for protecting LEDs",
+        "category": "Component Descriptions",
+        "source": "scraper"
+    },
+    {
+        "component": "Arduino Not Detected Fix",
+        "type": "troubleshooting",
+        "description": "Solutions for when Arduino is not detected by computer: check drivers, USB cable, and port selection",
+        "category": "Troubleshooting Tips",
+        "source": "scraper"
+    }
+]

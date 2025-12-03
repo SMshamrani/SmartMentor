@@ -1,0 +1,28 @@
+{
+    "project": "SmartMentor Arduino Guide System",
+    "timestamp": "2025-12-03 19:01:03",
+    "pipeline_version": "2.0",
+    "components": {
+        "image_collection": "\u2705",
+        "image_classification": "\u2705",
+        "data_search": "\u2705",
+        "text_classification": "\u2705",
+        "comparison_analysis": "\u2705"
+    },
+    "statistics": {
+        "total_images": 0,
+        "classified_images": 0
+    },
+    "files_generated": [
+        "image_sources/classification_report.json",
+        "image_sources/image_report.json",
+        "image_sources/image_catalog.json",
+        "scraped_json/comprehensive_arduino_data.json",
+        "raw/perplexity_data.json",
+        "raw/search_data.json",
+        "raw/scraped_json/comprehensive_arduino_data.json",
+        "processed/llm_classified.json",
+        "processed/comparison_results.json",
+        "processed/classified_text.json"
+    ]
+}

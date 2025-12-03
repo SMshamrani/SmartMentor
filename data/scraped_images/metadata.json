@@ -1,0 +1,120 @@
+{
+    "project": "SmartMentor Arduino Image Collection",
+    "setup_date": "2025-12-03 19:27:36",
+    "total_images": 12,
+    "images": [
+        {
+            "filename": "arduino_uno_test.png",
+            "path": "scraped_images/boards/arduino_uno_test.png",
+            "category": "boards",
+            "size_kb": 2.73,
+            "dimensions": "800x600",
+            "format": "PNG",
+            "created": "Wed Dec  3 19:13:56 2025"
+        },
+        {
+            "filename": "arduino_nano_test.png",
+            "path": "scraped_images/boards/arduino_nano_test.png",
+            "category": "boards",
+            "size_kb": 1.55,
+            "dimensions": "600x400",
+            "format": "PNG",
+            "created": "Wed Dec  3 19:13:56 2025"
+        },
+        {
+            "filename": "arduino_logo.png",
+            "path": "scraped_images/boards/arduino_logo.png",
+            "category": "boards",
+            "size_kb": 17.41,
+            "dimensions": "765x324",
+            "format": "PNG",
+            "created": "Wed Dec  3 19:27:36 2025"
+        },
+        {
+            "filename": "led_component.png",
+            "path": "scraped_images/components/led_component.png",
+            "category": "components",
+            "size_kb": 1.35,
+            "dimensions": "400x400",
+            "format": "PNG",
+            "created": "Wed Dec  3 19:13:56 2025"
+        },
+        {
+            "filename": "resistor_test.png",
+            "path": "scraped_images/components/resistor_test.png",
+            "category": "components",
+            "size_kb": 1.36,
+            "dimensions": "400x400",
+            "format": "PNG",
+            "created": "Wed Dec  3 19:13:56 2025"
+        },
+        {
+            "filename": "mega_pinout.jpg",
+            "path": "scraped_images/diagrams/mega_pinout.jpg",
+            "category": "diagrams",
+            "size_kb": 365.0,
+            "dimensions": "2571x2572",
+            "format": "PNG",
+            "created": "Wed Dec  3 17:14:35 2025"
+        },
+        {
+            "filename": "pinout_diagram.png",
+            "path": "scraped_images/diagrams/pinout_diagram.png",
+            "category": "diagrams",
+            "size_kb": 4.09,
+            "dimensions": "1000x800",
+            "format": "PNG",
+            "created": "Wed Dec  3 19:13:56 2025"
+        },
+        {
+            "filename": "uno_pinout.jpg",
+            "path": "scraped_images/diagrams/uno_pinout.jpg",
+            "category": "diagrams",
+            "size_kb": 287.41,
+            "dimensions": "2572x2572",
+            "format": "PNG",
+            "created": "Wed Dec  3 17:14:35 2025"
+        },
+        {
+            "filename": "erd_diagram.jpg",
+            "path": "scraped_images/diagrams/erd_diagram.jpg",
+            "category": "diagrams",
+            "size_kb": 28.46,
+            "dimensions": "811x497",
+            "format": "JPEG",
+            "created": "Wed Dec  3 17:14:35 2025"
+        },
+        {
+            "filename": "uno_pinout_diagram.png",
+            "path": "scraped_images/diagrams/uno_pinout_diagram.png",
+            "category": "diagrams",
+            "size_kb": 287.41,
+            "dimensions": "2572x2572",
+            "format": "PNG",
+            "created": "Wed Dec  3 19:26:49 2025"
+        },
+        {
+            "filename": "nano_pinout_diagram.png",
+            "path": "scraped_images/diagrams/nano_pinout_diagram.png",
+            "category": "diagrams",
+            "size_kb": 271.36,
+            "dimensions": "2571x2572",
+            "format": "PNG",
+            "created": "Wed Dec  3 19:26:49 2025"
+        },
+        {
+            "filename": "wiring_diagram.png",
+            "path": "scraped_images/diagrams/wiring_diagram.png",
+            "category": "diagrams",
+            "size_kb": 5.03,
+            "dimensions": "1200x900",
+            "format": "PNG",
+            "created": "Wed Dec  3 19:13:56 2025"
+        }
+    ],
+    "categories": {
+        "boards": 3,
+        "components": 2,
+        "diagrams": 7
+    }
+}
