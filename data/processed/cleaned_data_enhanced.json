@@ -1,0 +1,258 @@
+{
+  "Devices": [
+    {
+      "DeviceID": 1,
+      "DeviceName": "Arduino UNO R3",
+      "DeviceType": "Microcontroller Board",
+      "ImageURL": null,
+      "CreatedAt": "2025-12-10T16:21:23.173752"
+    }
+  ],
+  "Components": [
+    {
+      "ComponentID": 1,
+      "DeviceID": 1,
+      "ComponentName": "Digital I/O Pins",
+      "Description": "General purpose digital input/output",
+      "CreatedAt": "2025-12-10T16:21:23.173788"
+    },
+    {
+      "ComponentID": 2,
+      "DeviceID": 1,
+      "ComponentName": "Analog Input Pins",
+      "Description": "Read analog sensors",
+      "CreatedAt": "2025-12-10T16:21:23.173795"
+    },
+    {
+      "ComponentID": 3,
+      "DeviceID": 1,
+      "ComponentName": "5V Power Supply",
+      "Description": "Provides power to components",
+      "CreatedAt": "2025-12-10T16:21:23.173801"
+    },
+    {
+      "ComponentID": 4,
+      "DeviceID": 1,
+      "ComponentName": "Ground",
+      "Description": "Common return path for circuits",
+      "CreatedAt": "2025-12-10T16:21:23.173805"
+    },
+    {
+      "ComponentID": 5,
+      "DeviceID": 1,
+      "ComponentName": "USB Port",
+      "Description": "For programming and power",
+      "CreatedAt": "2025-12-10T16:21:23.173809"
+    },
+    {
+      "ComponentID": 6,
+      "DeviceID": 1,
+      "ComponentName": "Serial Communication",
+      "Description": "For data transfer",
+      "CreatedAt": "2025-12-10T16:21:23.173813"
+    },
+    {
+      "ComponentID": 7,
+      "DeviceID": 1,
+      "ComponentName": "SPI Interface",
+      "Description": "Serial Peripheral Interface",
+      "CreatedAt": "2025-12-10T16:21:23.173816"
+    },
+    {
+      "ComponentID": 8,
+      "DeviceID": 1,
+      "ComponentName": "I2C Interface",
+      "Description": "Two-wire communication",
+      "CreatedAt": "2025-12-10T16:21:23.173820"
+    },
+    {
+      "ComponentID": 9,
+      "DeviceID": 1,
+      "ComponentName": "Built-in LED",
+      "Description": "Connected to digital pin 13",
+      "CreatedAt": "2025-12-10T16:21:23.173823"
+    },
+    {
+      "ComponentID": 10,
+      "DeviceID": 1,
+      "ComponentName": "Reset Button",
+      "Description": "To reset the microcontroller",
+      "CreatedAt": "2025-12-10T16:21:23.173826"
+    }
+  ],
+  "Guides": [
+    {
+      "GuideID": 1,
+      "DeviceID": 1,
+      "Title": "Getting Started with Arduino UNO",
+      "DateCreated": "2025-12-10",
+      "GuideURL": "https://docs.arduino.cc/tutorials/uno-rev3/getting-started/",
+      "CreatedAt": "2025-12-10T16:21:23.173847"
+    },
+    {
+      "GuideID": 2,
+      "DeviceID": 1,
+      "Title": "Digital I/O Tutorial",
+      "DateCreated": "2025-12-10",
+      "GuideURL": null,
+      "CreatedAt": "2025-12-10T16:21:23.173852"
+    },
+    {
+      "GuideID": 3,
+      "DeviceID": 1,
+      "Title": "Analog Input and Sensors",
+      "DateCreated": "2025-12-10",
+      "GuideURL": null,
+      "CreatedAt": "2025-12-10T16:21:23.173856"
+    }
+  ],
+  "Steps": [
+    {
+      "StepID": 1,
+      "GuideID": 1,
+      "StepNumber": 1,
+      "Description": "Connect the USB cable to your Arduino UNO board",
+      "CreatedAt": "2025-12-10T16:21:23.173874"
+    },
+    {
+      "StepID": 2,
+      "GuideID": 1,
+      "StepNumber": 2,
+      "Description": "Download and install the Arduino IDE from arduino.cc",
+      "CreatedAt": "2025-12-10T16:21:23.173879"
+    },
+    {
+      "StepID": 3,
+      "GuideID": 1,
+      "StepNumber": 3,
+      "Description": "Open the Arduino IDE and select your board type",
+      "CreatedAt": "2025-12-10T16:21:23.173883"
+    },
+    {
+      "StepID": 4,
+      "GuideID": 1,
+      "StepNumber": 4,
+      "Description": "Select the correct COM port from Tools menu",
+      "CreatedAt": "2025-12-10T16:21:23.173885"
+    },
+    {
+      "StepID": 5,
+      "GuideID": 1,
+      "StepNumber": 5,
+      "Description": "Load the Blink example from File > Examples > 01.Basics",
+      "CreatedAt": "2025-12-10T16:21:23.173888"
+    },
+    {
+      "StepID": 6,
+      "GuideID": 1,
+      "StepNumber": 6,
+      "Description": "Click the Upload button to program your board",
+      "CreatedAt": "2025-12-10T16:21:23.173892"
+    },
+    {
+      "StepID": 7,
+      "GuideID": 1,
+      "StepNumber": 7,
+      "Description": "Observe the LED blinking on the board",
+      "CreatedAt": "2025-12-10T16:21:23.173895"
+    },
+    {
+      "StepID": 8,
+      "GuideID": 2,
+      "StepNumber": 1,
+      "Description": "Understand digital pins (0-13) as INPUT or OUTPUT",
+      "CreatedAt": "2025-12-10T16:21:23.173898"
+    },
+    {
+      "StepID": 9,
+      "GuideID": 2,
+      "StepNumber": 2,
+      "Description": "Use pinMode() to configure a pin",
+      "CreatedAt": "2025-12-10T16:21:23.173901"
+    },
+    {
+      "StepID": 10,
+      "GuideID": 2,
+      "StepNumber": 3,
+      "Description": "Use digitalWrite() to set HIGH (5V) or LOW (0V)",
+      "CreatedAt": "2025-12-10T16:21:23.173904"
+    },
+    {
+      "StepID": 11,
+      "GuideID": 2,
+      "StepNumber": 4,
+      "Description": "Use digitalRead() to read pin state",
+      "CreatedAt": "2025-12-10T16:21:23.173907"
+    },
+    {
+      "StepID": 12,
+      "GuideID": 2,
+      "StepNumber": 5,
+      "Description": "Create a simple LED on/off circuit",
+      "CreatedAt": "2025-12-10T16:21:23.173910"
+    },
+    {
+      "StepID": 13,
+      "GuideID": 2,
+      "StepNumber": 6,
+      "Description": "Test with a pushbutton as input",
+      "CreatedAt": "2025-12-10T16:21:23.173913"
+    },
+    {
+      "StepID": 14,
+      "GuideID": 2,
+      "StepNumber": 7,
+      "Description": "Build a simple LED control with button",
+      "CreatedAt": "2025-12-10T16:21:23.173915"
+    },
+    {
+      "StepID": 15,
+      "GuideID": 3,
+      "StepNumber": 1,
+      "Description": "Connect an analog sensor to pin A0",
+      "CreatedAt": "2025-12-10T16:21:23.173919"
+    },
+    {
+      "StepID": 16,
+      "GuideID": 3,
+      "StepNumber": 2,
+      "Description": "Use analogRead() to read the sensor value (0-1023)",
+      "CreatedAt": "2025-12-10T16:21:23.173922"
+    },
+    {
+      "StepID": 17,
+      "GuideID": 3,
+      "StepNumber": 3,
+      "Description": "Map sensor values to useful ranges",
+      "CreatedAt": "2025-12-10T16:21:23.173924"
+    },
+    {
+      "StepID": 18,
+      "GuideID": 3,
+      "StepNumber": 4,
+      "Description": "Use Serial.print() to view the values",
+      "CreatedAt": "2025-12-10T16:21:23.173927"
+    },
+    {
+      "StepID": 19,
+      "GuideID": 3,
+      "StepNumber": 5,
+      "Description": "Open Serial Monitor to see data",
+      "CreatedAt": "2025-12-10T16:21:23.173930"
+    },
+    {
+      "StepID": 20,
+      "GuideID": 3,
+      "StepNumber": 6,
+      "Description": "Create a light sensor application",
+      "CreatedAt": "2025-12-10T16:21:23.173932"
+    },
+    {
+      "StepID": 21,
+      "GuideID": 3,
+      "StepNumber": 7,
+      "Description": "Calibrate sensors for accuracy",
+      "CreatedAt": "2025-12-10T16:21:23.173935"
+    }
+  ]
+}

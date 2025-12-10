@@ -1,0 +1,47 @@
+{
+  "timestamp": "2025-12-10T16:17:07.174016",
+  "cleaned_data": {
+    "devices": 1,
+    "components": 0,
+    "guides": 1,
+    "steps": 4
+  },
+  "sample_data": {
+    "devices": [
+      {
+        "DeviceID": 1,
+        "DeviceName": "Arduino UNO R3",
+        "DeviceType": "Microcontroller Board",
+        "ImageURL": null,
+        "CreatedAt": "2025-12-10T16:17:07.172443"
+      }
+    ],
+    "components": [],
+    "guides": [
+      {
+        "GuideID": 1,
+        "DeviceID": 1,
+        "Title": "Getting Started with Arduino UNO",
+        "DateCreated": "2025-12-10",
+        "GuideURL": null,
+        "CreatedAt": "2025-12-10T16:17:07.172740"
+      }
+    ],
+    "steps": [
+      {
+        "StepID": 1,
+        "GuideID": 1,
+        "StepNumber": 1,
+        "Description": "Connect the USB cable to your Arduino UNO",
+        "CreatedAt": "2025-12-10T16:17:07.173075"
+      },
+      {
+        "StepID": 2,
+        "GuideID": 1,
+        "StepNumber": 2,
+        "Description": "Install the Arduino IDE on your computer",
+        "CreatedAt": "2025-12-10T16:17:07.173161"
+      }
+    ]
+  }
+}

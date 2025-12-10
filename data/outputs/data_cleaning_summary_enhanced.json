@@ -1,0 +1,83 @@
+{
+  "timestamp": "2025-12-10T16:21:23.174978",
+  "statistics": {
+    "devices": 1,
+    "components": 10,
+    "guides": 3,
+    "steps": 21,
+    "total_records": 35
+  },
+  "data_sample": {
+    "device": {
+      "DeviceID": 1,
+      "DeviceName": "Arduino UNO R3",
+      "DeviceType": "Microcontroller Board",
+      "ImageURL": null,
+      "CreatedAt": "2025-12-10T16:21:23.173752"
+    },
+    "components_sample": [
+      {
+        "ComponentID": 1,
+        "DeviceID": 1,
+        "ComponentName": "Digital I/O Pins",
+        "Description": "General purpose digital input/output",
+        "CreatedAt": "2025-12-10T16:21:23.173788"
+      },
+      {
+        "ComponentID": 2,
+        "DeviceID": 1,
+        "ComponentName": "Analog Input Pins",
+        "Description": "Read analog sensors",
+        "CreatedAt": "2025-12-10T16:21:23.173795"
+      },
+      {
+        "ComponentID": 3,
+        "DeviceID": 1,
+        "ComponentName": "5V Power Supply",
+        "Description": "Provides power to components",
+        "CreatedAt": "2025-12-10T16:21:23.173801"
+      }
+    ],
+    "guides_sample": [
+      {
+        "GuideID": 1,
+        "DeviceID": 1,
+        "Title": "Getting Started with Arduino UNO",
+        "DateCreated": "2025-12-10",
+        "GuideURL": "https://docs.arduino.cc/tutorials/uno-rev3/getting-started/",
+        "CreatedAt": "2025-12-10T16:21:23.173847"
+      },
+      {
+        "GuideID": 2,
+        "DeviceID": 1,
+        "Title": "Digital I/O Tutorial",
+        "DateCreated": "2025-12-10",
+        "GuideURL": null,
+        "CreatedAt": "2025-12-10T16:21:23.173852"
+      }
+    ],
+    "steps_sample": [
+      {
+        "StepID": 1,
+        "GuideID": 1,
+        "StepNumber": 1,
+        "Description": "Connect the USB cable to your Arduino UNO board",
+        "CreatedAt": "2025-12-10T16:21:23.173874"
+      },
+      {
+        "StepID": 2,
+        "GuideID": 1,
+        "StepNumber": 2,
+        "Description": "Download and install the Arduino IDE from arduino.cc",
+        "CreatedAt": "2025-12-10T16:21:23.173879"
+      },
+      {
+        "StepID": 3,
+        "GuideID": 1,
+        "StepNumber": 3,
+        "Description": "Open the Arduino IDE and select your board type",
+        "CreatedAt": "2025-12-10T16:21:23.173883"
+      }
+    ]
+  }
+}
