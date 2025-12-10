@@ -112,3 +112,4 @@ __pycache__/
 # Data (large files - حط هذا إذا كانت الملفات كبيرة جداً)
 data/raw/scraped_images/*.zip
 *.parquet
+.env

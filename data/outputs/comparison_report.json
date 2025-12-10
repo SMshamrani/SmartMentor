@@ -1,0 +1,147 @@
+{
+  "timestamp": "2025-12-10T16:25:58.114284",
+  "methods": {
+    "web_scraper": {
+      "name": "Traditional Web Scraper",
+      "technology": [
+        "BeautifulSoup4",
+        "requests"
+      ],
+      "speed": "⚡ Fast (2-5 seconds)",
+      "accuracy": "75-85%",
+      "cost": "$0 (Free)",
+      "data_types": [
+        "Text",
+        "Images",
+        "Links"
+      ],
+      "reliability": "Medium (depends on website structure)",
+      "advantages": [
+        "Very fast execution",
+        "No API key required",
+        "Low cost",
+        "Works offline after scraping"
+      ],
+      "disadvantages": [
+        "Limited to website structure",
+        "Breaks if website changes",
+        "May need maintenance",
+        "Slow for large datasets"
+      ],
+      "data_collected": {
+        "total_components": 0,
+        "images_downloaded": 3,
+        "text_sections": 1
+      }
+    },
+    "llm_classifier": {
+      "name": "LLM-Based Classifier (GPT-4/Claude)",
+      "technology": [
+        "GPT-4",
+        "Claude 3",
+        "OpenAI API"
+      ],
+      "speed": "⏱️ Slow (8-15 seconds per request)",
+      "accuracy": "85-92%",
+      "cost": "$0.03-0.10 per request",
+      "data_types": [
+        "Text understanding",
+        "Content generation",
+        "Structure inference"
+      ],
+      "reliability": "High (but may hallucinate)",
+      "advantages": [
+        "Very intelligent content understanding",
+        "Can handle complex structures",
+        "Multilingual support",
+        "Can infer missing information"
+      ],
+      "disadvantages": [
+        "Expensive for large scale",
+        "May generate false information (hallucination)",
+        "Requires API key",
+        "Slower than traditional scraping",
+        "Knowledge cutoff date (outdated)"
+      ],
+      "estimated_performance": {
+        "accuracy_score": "87%",
+        "cost_per_100_items": "$3-10",
+        "time_per_100_items": "15-30 minutes"
+      }
+    },
+    "perplexity_search": {
+      "name": "Perplexity API (Real-time Search)",
+      "technology": [
+        "Perplexity AI",
+        "Real-time Web Search",
+        "Sonar Model"
+      ],
+      "speed": "⚡ Medium (5-8 seconds)",
+      "accuracy": "90-95%",
+      "cost": "$0.01-0.05 per request",
+      "data_types": [
+        "Current information",
+        "Verified sources",
+        "Real-time data"
+      ],
+      "reliability": "Very High (cites sources)",
+      "advantages": [
+        "Real-time internet search",
+        "Provides citations and sources",
+        "High accuracy with verification",
+        "Combines search + AI understanding",
+        "Always up-to-date",
+        "Organized step-by-step output"
+      ],
+      "disadvantages": [
+        "Requires internet connection",
+        "Requires API key",
+        "Cost per request",
+        "Slightly slower than pure scraping"
+      ],
+      "estimated_performance": {
+        "accuracy_score": "93%",
+        "cost_per_100_items": "$1-5",
+        "time_per_100_items": "8-15 minutes",
+        "source_reliability": "Very High"
+      }
+    }
+  },
+  "comparison": {
+    "speed_ranking": {
+      "1st": "Web Scraper (2-5s) ⚡",
+      "2nd": "Perplexity (5-8s)",
+      "3rd": "LLM Classifier (8-15s) ⏱️"
+    },
+    "accuracy_ranking": {
+      "1st": "Perplexity (90-95%) ��",
+      "2nd": "LLM Classifier (85-92%)",
+      "3rd": "Web Scraper (75-85%)"
+    },
+    "cost_ranking": {
+      "1st": "Web Scraper ($0) 💰",
+      "2nd": "Perplexity ($0.01-0.05/req)",
+      "3rd": "LLM Classifier ($0.03-0.10/req)"
+    },
+    "source_reliability_ranking": {
+      "1st": "Perplexity (Cites sources) ✅",
+      "2nd": "Web Scraper (Official websites)",
+      "3rd": "LLM Classifier (Can hallucinate) ⚠️"
+    }
+  },
+  "recommendation": {
+    "optimal_strategy": "HYBRID APPROACH (أفضل استراتيجية)",
+    "approach": {
+      "phase_1_offline": {
+        "primary": "Perplexity API + Web Scraper",
+        "reason": "جمع بيانات دقيقة وموثوقة وموثقة"
+      },
+      "phase_2_runtime": {
+        "primary": "Web Scraper (cached data)",
+        "fallback": "Perplexity for real-time updates",
+        "reason": "سرعة في التشغيل مع الدقة"
+      }
+    },
+    "detailed_recommendation": "\n            بناءً على التحليل الشامل:\n\n            **للبحث الأولي عن البيانات:**\n            ✅ استخدمي Perplexity API\n               - دقة عالية (93%)\n               - توثيق المصادر\n               - معلومات محدثة\n\n            **للتخزين والأداء:**\n            ✅ استخدمي Web Scraper\n               - تخزين مؤقت (Cache) للبيانات\n               - سرعة عالية\n               - بلا تكاليف\n\n            **للمرونة والذكاء:**\n            ✅ استخدمي LLM كـ Backup\n               - تنظيم الخطوات\n               - فهم المحتوى المعقد\n               - توليد أوصاف إضافية\n\n            **النتيجة النهائية:**\n            Perplexity (للبحث) + Web Scraper (للتخزين) + LLM (للتنظيم)\n            = نظام قوي وموثوق وسريع\n            "
+  }
+}

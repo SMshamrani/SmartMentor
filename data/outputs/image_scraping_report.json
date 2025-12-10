@@ -1,0 +1,163 @@
+{
+  "timestamp": "1765385393.7775013",
+  "images_downloaded": [
+    {
+      "name": "btn-search",
+      "project": "andon_system",
+      "file": "data/raw/scraped_images/project_examples/andon_system_btn-search.svg",
+      "size": 1424
+    },
+    {
+      "name": "btn-logo",
+      "project": "andon_system",
+      "file": "data/raw/scraped_images/project_examples/andon_system_btn-logo.svg",
+      "size": 5606
+    },
+    {
+      "name": "login-logo",
+      "project": "andon_system",
+      "file": "data/raw/scraped_images/project_examples/andon_system_login-logo.svg",
+      "size": 6829
+    },
+    {
+      "name": "btn-search",
+      "project": "andon_system",
+      "file": "data/raw/scraped_images/project_examples/andon_system_btn-search.svg",
+      "size": 1424
+    },
+    {
+      "name": "btn-logo",
+      "project": "andon_system",
+      "file": "data/raw/scraped_images/project_examples/andon_system_btn-logo.svg",
+      "size": 5606
+    },
+    {
+      "name": "login-logo",
+      "project": "andon_system",
+      "file": "data/raw/scraped_images/project_examples/andon_system_login-logo.svg",
+      "size": 6829
+    },
+    {
+      "name": "Image",
+      "project": "andon_system",
+      "file": "data/raw/scraped_images/project_examples/andon_system_Image.png",
+      "size": 171108
+    },
+    {
+      "name": "Image",
+      "project": "andon_system",
+      "file": "data/raw/scraped_images/project_examples/andon_system_Image.jpg",
+      "size": 70412
+    },
+    {
+      "name": "btn-search",
+      "project": "rfid_reader",
+      "file": "data/raw/scraped_images/project_examples/rfid_reader_btn-search.svg",
+      "size": 1424
+    },
+    {
+      "name": "btn-logo",
+      "project": "rfid_reader",
+      "file": "data/raw/scraped_images/project_examples/rfid_reader_btn-logo.svg",
+      "size": 5606
+    },
+    {
+      "name": "login-logo",
+      "project": "rfid_reader",
+      "file": "data/raw/scraped_images/project_examples/rfid_reader_login-logo.svg",
+      "size": 6829
+    },
+    {
+      "name": "btn-search",
+      "project": "rfid_reader",
+      "file": "data/raw/scraped_images/project_examples/rfid_reader_btn-search.svg",
+      "size": 1424
+    },
+    {
+      "name": "btn-logo",
+      "project": "rfid_reader",
+      "file": "data/raw/scraped_images/project_examples/rfid_reader_btn-logo.svg",
+      "size": 5606
+    },
+    {
+      "name": "login-logo",
+      "project": "rfid_reader",
+      "file": "data/raw/scraped_images/project_examples/rfid_reader_login-logo.svg",
+      "size": 6829
+    },
+    {
+      "name": "btn-search",
+      "project": "blinking_led",
+      "file": "data/raw/scraped_images/project_examples/blinking_led_btn-search.svg",
+      "size": 1424
+    },
+    {
+      "name": "btn-logo",
+      "project": "blinking_led",
+      "file": "data/raw/scraped_images/project_examples/blinking_led_btn-logo.svg",
+      "size": 5606
+    },
+    {
+      "name": "login-logo",
+      "project": "blinking_led",
+      "file": "data/raw/scraped_images/project_examples/blinking_led_login-logo.svg",
+      "size": 6829
+    },
+    {
+      "name": "btn-search",
+      "project": "blinking_led",
+      "file": "data/raw/scraped_images/project_examples/blinking_led_btn-search.svg",
+      "size": 1424
+    },
+    {
+      "name": "btn-logo",
+      "project": "blinking_led",
+      "file": "data/raw/scraped_images/project_examples/blinking_led_btn-logo.svg",
+      "size": 5606
+    },
+    {
+      "name": "login-logo",
+      "project": "blinking_led",
+      "file": "data/raw/scraped_images/project_examples/blinking_led_login-logo.svg",
+      "size": 6829
+    }
+  ],
+  "pdfs_downloaded": [
+    {
+      "name": "pinout_diagram",
+      "file": "data/raw/scraped_images/project_examples/pinout_diagram.pdf",
+      "size": 345772
+    },
+    {
+      "name": "datasheet",
+      "file": "data/raw/scraped_images/project_examples/datasheet.pdf",
+      "size": 2425367
+    },
+    {
+      "name": "schematics",
+      "file": "data/raw/scraped_images/project_examples/schematics.pdf",
+      "size": 71600
+    }
+  ],
+  "failed_downloads": [],
+  "project_info": [
+    {
+      "project": "andon_system",
+      "title": "Andon System using Arduino UNO",
+      "url": "https://projecthub.arduino.cc/ibrahim_magdy/basic-andon-system-using-arduino-uno-r3-and-python-5214b0",
+      "images_found": 8
+    },
+    {
+      "project": "rfid_reader",
+      "title": "UNO R3 with RFID Reader",
+      "url": "https://projecthub.arduino.cc/ZJH/buono-uno-r3-with-rc522-rfid-reader-kit-for-makers-ee12fb",
+      "images_found": 6
+    },
+    {
+      "project": "blinking_led",
+      "title": "Blinking LED Tutorial",
+      "url": "https://projecthub.arduino.cc/arohansenroy/blinking-led-77a79f",
+      "images_found": 6
+    }
+  ]
+}

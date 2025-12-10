@@ -1,0 +1,50 @@
+{
+  "timestamp": "2025-12-10T17:45:13.755265",
+  "api_key_status": "configured",
+  "model_used": "llama-2-70b-chat",
+  "enriched_components": [
+    {
+      "component": "Digital I/O Pins Arduino UNO",
+      "error": "API Error 400",
+      "status": "failed"
+    },
+    {
+      "component": "Analog Input Pins Arduino UNO",
+      "error": "API Error 400",
+      "status": "failed"
+    },
+    {
+      "component": "Arduino UNO USB Port",
+      "error": "API Error 400",
+      "status": "failed"
+    },
+    {
+      "component": "Arduino Serial Communication",
+      "error": "API Error 400",
+      "status": "failed"
+    },
+    {
+      "component": "Arduino SPI Interface",
+      "error": "API Error 400",
+      "status": "failed"
+    }
+  ],
+  "enriched_tutorials": [
+    {
+      "tutorial": "Getting Started with Arduino UNO",
+      "error": "API Error 400",
+      "status": "failed"
+    },
+    {
+      "tutorial": "Arduino Digital I/O Control",
+      "error": "API Error 400",
+      "status": "failed"
+    },
+    {
+      "tutorial": "Arduino Analog Sensor Reading",
+      "error": "API Error 400",
+      "status": "failed"
+    }
+  ],
+  "total_requests": 8
+}
