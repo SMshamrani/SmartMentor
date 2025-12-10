@@ -1,0 +1,11 @@
+{
+  "device": {
+    "name": "Arduino UNO R3",
+    "description": "Microcontroller board based on ATmega328P",
+    "official_link": "https://docs.arduino.cc/tutorials/uno-rev3/getting-started/",
+    "specifications": {},
+    "components": [],
+    "pinout": {},
+    "tutorials": []
+  }
+}
