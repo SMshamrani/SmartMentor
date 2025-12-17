@@ -213,6 +213,18 @@ pytest
 
 Ensure that your virtual environment is active and all required dependencies are installed.
 
+## Contributors
+
+This project was developed as a graduation project by:
+
+- Student 1 – Sarah Mohammad Alshamrani   444003567 
+- Student 2 – Waad Mohammad AL luhaybi   444001927 
+- Student 3 – Shahad Hassan Altalhi    444001817
+- Student 4 – Reem Ahmad Alharbi   444003905
+- 
+- Supervisor: Dr. Daren FadolAlkarim
+
+
 ## License
 
 This project is licensed under the MIT License.  
