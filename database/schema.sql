@@ -10,7 +10,7 @@ CREATE TABLE Users (
     CreatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
--- Devices table
+-- Devices table (stores Arduino boards and similar devices)
 CREATE TABLE Devices (
     DeviceID SERIAL PRIMARY KEY,
     DeviceName VARCHAR(255) NOT NULL,
@@ -19,7 +19,7 @@ CREATE TABLE Devices (
     CreatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
--- Components table
+-- Components table (stores components related to each device)
 CREATE TABLE Components (
     ComponentID SERIAL PRIMARY KEY,
     DeviceID INTEGER REFERENCES Devices(DeviceID) ON DELETE CASCADE,
@@ -28,7 +28,7 @@ CREATE TABLE Components (
     CreatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
--- Guides table
+-- Guides table (tutorials or guides for each device)
 CREATE TABLE Guides (
     GuideID SERIAL PRIMARY KEY,
     DeviceID INTEGER REFERENCES Devices(DeviceID) ON DELETE CASCADE,
@@ -38,7 +38,7 @@ CREATE TABLE Guides (
     CreatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
--- Steps table
+-- Steps table (detailed steps inside each guide)
 CREATE TABLE Steps (
     StepID SERIAL PRIMARY KEY,
     GuideID INTEGER REFERENCES Guides(GuideID) ON DELETE CASCADE,
@@ -47,18 +47,7 @@ CREATE TABLE Steps (
     CreatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
--- Indexes for better performance
-CREATE INDEX idx_components_device_id ON Components(DeviceID);
-CREATE INDEX idx_guides_device_id ON Guides(DeviceID);
-CREATE INDEX idx_steps_guide_id ON Steps(GuideID);
-CREATE INDEX idx_steps_step_number ON Steps(GuideID, StepNumber);
-
--- Sample data insertion (optional)
-INSERT INTO Devices (DeviceName, DeviceType, ImageURL) VALUES 
-('Arduino Uno', 'Microcontroller Board', 'https://example.com/arduino-uno.jpg'),
-('Arduino Nano', 'Microcontroller Board', 'https://example.com/arduino-nano.jpg');
-
--- UserProgress table 
+-- UserProgress table (tracks user progress through guides and steps)
 CREATE TABLE UserProgress (
     ProgressID SERIAL PRIMARY KEY,
     UserID INTEGER REFERENCES Users(UserID) ON DELETE CASCADE,
@@ -69,7 +58,31 @@ CREATE TABLE UserProgress (
     UpdatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
--- Indexes for better performance
+-- Feedback table (stores user feedback on guides)
+CREATE TABLE Feedback (
+    FeedbackID SERIAL PRIMARY KEY,                -- Unique feedback ID
+    UserID INTEGER REFERENCES Users(UserID) ON DELETE CASCADE,     -- User who gave the feedback
+    GuideID INTEGER REFERENCES Guides(GuideID) ON DELETE CASCADE,  -- Guide being reviewed
+    Rating INT CHECK (Rating BETWEEN 1 AND 5),   -- Rating from 1 to 5
+    Comment TEXT,                                 -- Optional text comment
+    DateSubmitted TIMESTAMP DEFAULT CURRENT_TIMESTAMP  -- When feedback was submitted
+);
+
+-- Indexes for better performance on foreign keys and lookups
+CREATE INDEX idx_components_device_id ON Components(DeviceID);
+CREATE INDEX idx_guides_device_id ON Guides(DeviceID);
+CREATE INDEX idx_steps_guide_id ON Steps(GuideID);
+CREATE INDEX idx_steps_step_number ON Steps(GuideID, StepNumber);
+
 CREATE INDEX idx_userprogress_user_id ON UserProgress(UserID);
 CREATE INDEX idx_userprogress_device_id ON UserProgress(DeviceID);
 CREATE INDEX idx_userprogress_step_id ON UserProgress(StepID);
+
+CREATE INDEX idx_feedback_user_id ON Feedback(UserID);
+CREATE INDEX idx_feedback_guide_id ON Feedback(GuideID);
+CREATE INDEX idx_feedback_rating ON Feedback(Rating);
+
+-- Sample data insertion (optional examples for devices)
+INSERT INTO Devices (DeviceName, DeviceType, ImageURL) VALUES 
+('Arduino Uno', 'Microcontroller Board', 'https://example.com/arduino-uno.jpg'),
+('Arduino Nano', 'Microcontroller Board', 'https://example.com/arduino-nano.jpg');

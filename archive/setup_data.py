@@ -1,58 +1,60 @@
 # scripts/setup_data.py
+"""
+Data setup pipeline script for the SmartMentor project.
+Loads local tabular data and downloads example images from GitHub and Arduino Docs.
+"""
 
 import sys
 from pathlib import Path
 
-# إضافة المسار الرئيسي
+# Add project root to Python path so that src can be imported
 project_root = Path(__file__).parent.parent
 sys.path.insert(0, str(project_root))
 
-# الـ imports الصحيحة
+# Import Phase 1 offline processing utilities
 from src.Phase1_OfflineProcessing.data_loader import DataLoader
 from src.Phase1_OfflineProcessing.image_downloader_github import GitHubImageDownloader
-from src.Phase1_OfflineProcessing.web_scraper_images import ArduinoDocsScraper  # ✅ هذا الخط
+from src.Phase1_OfflineProcessing.web_scraper_images import ArduinoDocsScraper
+
 
 def setup_all_data():
-    """خطوات تحضير كل البيانات"""
-    
+    """Run all data preparation steps: load data, download images, and scrape docs."""
+
     print("=" * 50)
-    print("🚀 SmartMentor Data Setup Pipeline")
+    print("SmartMentor Data Setup Pipeline")
     print("=" * 50)
-    
+
+    # Step 1: Load local tabular data (XLSX/CSV)
     try:
-        # Step 1: تحميل البيانات المحلية
-        print("\n📊 Step 1: Loading local data (XLSX/CSV)...")
+        print("\nStep 1: Loading local data (XLSX/CSV)...")
         loader = DataLoader()
         data = loader.load_xlsx_csv()
-        print("✅ Data loaded successfully!")
-        
+        print("Data loaded successfully")
     except Exception as e:
-        print(f"❌ Error in Step 1: {e}")
-    
+        print(f"Error in Step 1 (data loading): {e}")
+
+    # Step 2: Download images from GitHub
     try:
-        # Step 2: تحميل الصور من GitHub
-        print("\n🖼️  Step 2: Downloading images from GitHub...")
+        print("\nStep 2: Downloading images from GitHub...")
         github_downloader = GitHubImageDownloader()
         github_downloader.download_all()
-        print("✅ Images downloaded!")
-        
+        print("Images downloaded from GitHub")
     except Exception as e:
-        print(f"❌ Error in Step 2: {e}")
-    
+        print(f"Error in Step 2 (GitHub images): {e}")
+
+    # Step 3: Scrape images from Arduino official documentation
     try:
-        # Step 3: كشط الصور من Arduino Docs
-        print("\n🕷️  Step 3: Scraping Arduino docs for images...")
-        scraper = ArduinoDocsScraper()  # ✅ الآن بيشتغل
+        print("\nStep 3: Scraping Arduino docs for images...")
+        scraper = ArduinoDocsScraper()
         scraper.scrape_getting_started_images()
-        print("✅ Docs scraped!")
-        
+        print("Arduino docs scraped successfully")
     except Exception as e:
-        print(f"❌ Error in Step 3: {e}")
-    
+        print(f"Error in Step 3 (Arduino docs scraping): {e}")
+
     print("\n" + "=" * 50)
-    print("✅ Setup complete!")
+    print("Setup complete")
     print("=" * 50)
+
 
 if __name__ == "__main__":
     setup_all_data()
-
