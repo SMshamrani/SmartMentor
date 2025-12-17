@@ -1,81 +1,36 @@
-# requirements.txt
-
-# Web Scraping
-requests==2.31.0
-beautifulsoup4==4.12.2
-lxml==4.9.3
-selenium==4.15.2
-
-# requirements.txt
-pandas>=2.0.0
-openpyxl>=3.10.0
-requests>=2.31.0
-beautifulsoup4>=4.12.0
-python-dotenv>=1.0.0
-
-
-
-# requirements.txt
-openai>=1.0.0
-serpapi
-pillow
-requests
-selenium
-python-dotenv
-pytest==7.4.3
-urllib3==2.0.7
-beautifulsoup4
-lxml
-psycopg2-binary  # إضافة لاتصال PostgreSQL
-googlesearch-python
-
-
-# Data Processing
-pandas==2.2.0                  
-numpy==1.26.0                  
-Pillow==10.1.0
-
-# Database
-sqlalchemy==2.0.23
-psycopg2-binary==2.9.9
-
-# Development
-jupyter==1.0.0
-python-dotenv==1.0.0
-
-# Environment variables
-python-dotenv==1.0.0
-
-# Testing
-pytest==7.4.3
-urllib3==2.0.7
-
-
-
-
-
 # Core dependencies
 requests>=2.31.0
-Pillow>=10.0.0
-numpy>=1.24.0
 pandas>=2.0.0
+numpy>=1.24.0
+Pillow>=10.0.0
 
 # Web scraping and search
-googlesearch-python>=1.2.3
 beautifulsoup4>=4.12.0
 lxml>=4.9.0
+selenium>=4.15.2
+googlesearch-python>=1.2.3
 
-# Data processing
+# Configuration and environment variables
 python-dotenv>=1.0.0
-openai>=1.0.0  # Optional for AI classification
 
-# Image processing
-opencv-python>=4.8.0  # Optional for advanced image analysis
-scikit-image>=0.22.0  # Optional for image features
+# Optional AI and external APIs (not required for basic pipeline)
+openai>=1.0.0
+serpapi
 
-# Database (optional)
+# Image processing (optional for advanced analysis)
+opencv-python>=4.8.0
+scikit-image>=0.22.0
+
+# Database support (optional)
+sqlalchemy>=2.0.23
 psycopg2-binary>=2.9.9
+openpyxl>=3.10.0  # Excel support for pandas
 
-# Utilities
-tqdm>=4.66.0  # For progress bars
-colorama>=0.4.6  # For colored output
+# Development and notebooks (optional)
+jupyter==1.0.0
+
+# Testing and utilities
+pytest==7.4.3
+urllib3==2.0.7
+tqdm>=4.66.0
+colorama>=0.4.6
