@@ -113,3 +113,4 @@ __pycache__/
 data/raw/scraped_images/*.zip
 *.parquet
 .env
+.env
