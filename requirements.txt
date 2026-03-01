@@ -13,24 +13,23 @@ googlesearch-python>=1.2.3
 # Configuration and environment variables
 python-dotenv>=1.0.0
 
-# Optional AI and external APIs (not required for basic pipeline)
-openai>=1.0.0
-serpapi
+# AI and external APIs (الأساسي لمشروعك)
+openai>=1.40.0
+serpapi>=0.1.4
 
-# Image processing (optional for advanced analysis)
+# Image processing
 opencv-python>=4.8.0
 scikit-image>=0.22.0
 
-# Database support (optional)
-sqlalchemy>=2.0.23
+# Database support (PostgreSQL)
 psycopg2-binary>=2.9.9
-openpyxl>=3.10.0  # Excel support for pandas
+sqlalchemy>=2.0.23
+openpyxl>=3.1.0  # Excel support
 
-# Development and notebooks (optional)
-jupyter==1.0.0
-
-# Testing and utilities
-pytest==7.4.3
-urllib3==2.0.7
+# Utilities
 tqdm>=4.66.0
 colorama>=0.4.6
+
+# Development
+jupyter>=1.0.0
+pytest>=7.4.3
