@@ -1,0 +1,53 @@
+import tensorflow as tf
+from tensorflow.keras.preprocessing import image
+import numpy as np
+from google.colab import files  # Used only during testing phase in Google Colab
+
+# ==========================================================
+# AI-Based Printer Classification (Prototype Version)
+# This CNN model is implemented as an enhancement feature
+# to automatically classify printer models from images.
+# It is included in the project for comparison purposes
+# with the traditional manual selection method.
+# This version is tested in Google Colab environment only.
+# ==========================================================
+
+# ---------- 1. Upload image (Testing Phase Only) ----------
+# Allows manual image upload for model testing
+uploaded = files.upload()
+for filename in uploaded.keys():
+    img_path = filename  # Store uploaded image path
+
+# ---------- 2. Load trained CNN model ----------
+# Load the pre-trained printer classification model
+loaded_model = tf.keras.models.load_model("printer_classifier_model.keras")
+
+# ---------- 3. Printer class labels ----------
+# These are the printer models used during model training
+class_names = [
+    "Canon pixma g3411",
+    "Epson ecotank l3250",
+    "HP DeskJet 2720",
+    "HP LaserJet Pro M404dn"
+]
+
+# ---------- 4. Image preprocessing ----------
+# Resize image to match model input size (224x224)
+# Normalize pixel values to range [0,1] to improve model performance
+img = image.load_img(img_path, target_size=(224, 224))
+x = image.img_to_array(img)
+x = np.expand_dims(x, axis=0) / 255.0  # Rescaling
+
+# ---------- 5. Prediction ----------
+# Model outputs probability distribution over all classes
+pred = loaded_model.predict(x)
+confidence = np.max(pred)
+class_index = np.argmax(pred)
+
+# ---------- 6. Confidence Threshold ----------
+# If highest probability is below 60%, classify as Unknown
+threshold = 0.6
+if confidence < threshold:
+    print("Predicted class: Unknown / Not in dataset")
+else:
+    print(f"Predicted class: {class_names[class_index]} (confidence: {confidence:.2f})")
