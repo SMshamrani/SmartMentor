@@ -1,0 +1,44 @@
+from openai import OpenAI
+import base64
+
+client = OpenAI()
+
+with open(image_path, "rb") as f:
+    image_base64 = base64.b64encode(f.read()).decode()
+
+prompt = f"""
+You are an AI that identifies printer models from images.
+
+Tasks:
+1. Check if the image contains a printer
+2. If yes, return the printer's exact model name or brand if visible
+3. If not a printer → return "UNKNOWN"
+
+Rules:
+- Return ONLY:
+  - the printer model or brand (if detected)
+  - OR "UNKNOWN"
+- No explanation
+"""
+
+response = client.responses.create(
+    model="gpt-4.1-mini",
+    input=[{
+        "role": "user",
+        "content": [
+            {"type": "input_text", "text": prompt},
+            {
+                "type": "input_image",
+                "image_url": f"data:image/jpeg;base64,{image_base64}"
+            }
+        ]
+    }]
+)
+
+result = response.output_text.strip()
+
+print("===== RESULT =====")
+if result == "UNKNOWN":
+    print(" Image not recognized or not a printer")
+else:
+    print(f" Printer recognized: {result}")
