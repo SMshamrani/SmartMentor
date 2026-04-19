@@ -1,0 +1,45 @@
+﻿source_id,printer_name,status,db_message,original_images,valid_images,steps_count,components_count,vlm_used,vlm_detected
+1,HP LASERJET PRO M15W,success,"Inserted ID=1 | HP LASERJET PRO M15W (13 images, 11 steps)",13,13,11,6,False,SKIPPED
+2,HP LASERJET PRO MFP M28W,success,"Inserted ID=2 | HP LASERJET PRO MFP M28W (17 images, 10 steps)",18,17,10,7,False,SKIPPED
+3,HP DESKJET 2710,success,"Inserted ID=3 | HP DESKJET 2710 (4 images, 10 steps)",4,4,10,7,False,SKIPPED
+4,HP SMART TANK 515,success,"Inserted ID=4 | HP SMART TANK 515 (8 images, 10 steps)",10,8,10,6,False,SKIPPED
+5,HP SMART TANK 530,success,"Inserted ID=5 | HP SMART TANK 530 (4 images, 10 steps)",4,4,10,6,False,SKIPPED
+6,HP OFFICEJET PRO 9013,success,"Inserted ID=6 | HP OFFICEJET PRO 9013 (9 images, 12 steps)",9,9,12,7,False,SKIPPED
+7,HP LASERJET PRO MFP M428FDW,success,"Inserted ID=7 | HP LASERJET PRO MFP M428FDW (7 images, 10 steps)",7,7,10,8,False,SKIPPED
+8,HP SMART TANK 615,success,"Inserted ID=8 | HP SMART TANK 615 (7 images, 11 steps)",8,7,11,6,False,SKIPPED
+9,CANON PIXMA G2411,success,"Inserted ID=9 | CANON PIXMA G2411 (7 images, 10 steps)",10,7,10,7,False,SKIPPED
+10,EPSON ECOTANK L1250,success,"Inserted ID=10 | EPSON ECOTANK L1250 (8 images, 10 steps)",10,8,10,6,False,SKIPPED
+11,CANON PIXMA G3411,success,"Inserted ID=11 | CANON PIXMA G3411 (25 images, 11 steps)",25,25,11,6,False,SKIPPED
+12,EPSON ECOTANK L3250,success,"Inserted ID=12 | EPSON ECOTANK L3250 (24 images, 11 steps)",25,24,11,6,False,SKIPPED
+13,SAMSUNG XPRESS SL-M2070,success,"Inserted ID=13 | SAMSUNG XPRESS SL-M2070 (16 images, 11 steps)",25,16,11,5,False,SKIPPED
+14,LEXMARK MS621DN,success,"Inserted ID=14 | LEXMARK MS621DN (25 images, 10 steps)",25,25,10,6,False,SKIPPED
+15,PANTUM P2500W,success,"Inserted ID=15 | PANTUM P2500W (20 images, 12 steps)",21,20,12,7,False,SKIPPED
+16,CANON IMAGECLASS MF3010,success,"Inserted ID=16 | CANON IMAGECLASS MF3010 (21 images, 10 steps)",22,21,10,7,False,SKIPPED
+17,CANON PIXMA TR4540,success,"Inserted ID=17 | CANON PIXMA TR4540 (20 images, 11 steps)",20,20,11,10,False,SKIPPED
+18,DELL E310DW,success,"Inserted ID=18 | DELL E310DW (9 images, 10 steps)",10,9,10,7,False,SKIPPED
+19,OKI B412DN,success,"Inserted ID=19 | OKI B412DN (10 images, 10 steps)",10,10,10,7,False,SKIPPED
+20,KYOCERA ECOSYS P2040DN,success,"Inserted ID=20 | KYOCERA ECOSYS P2040DN (10 images, 11 steps)",10,10,11,6,False,SKIPPED
+21,HP DESKJET 2720,success,"Inserted ID=21 | HP DESKJET 2720 (0 images, 10 steps)",32,0,10,7,False,SKIPPED
+22,HP LASERJET PRO M404DN,success,"Inserted ID=22 | HP LASERJET PRO M404DN (0 images, 10 steps)",25,0,10,6,False,SKIPPED
+23,EPSON ECOTANK L3150,success,"Inserted ID=23 | EPSON ECOTANK L3150 (0 images, 10 steps)",25,0,10,7,False,SKIPPED
+24,EPSON ECOTANK L3210,success,"Inserted ID=24 | EPSON ECOTANK L3210 (0 images, 10 steps)",25,0,10,8,False,SKIPPED
+25,EPSON ECOTANK L5290,success,"Inserted ID=25 | EPSON ECOTANK L5290 (0 images, 11 steps)",25,0,11,7,False,SKIPPED
+26,EPSON ECOTANK L4260,success,"Inserted ID=26 | EPSON ECOTANK L4260 (0 images, 11 steps)",25,0,11,6,False,SKIPPED
+27,CANON PIXMA G570,success,"Inserted ID=27 | CANON PIXMA G570 (6 images, 11 steps)",25,6,11,7,False,SKIPPED
+28,HP OFFICEJET PRO 9125E,success,"Inserted ID=28 | HP OFFICEJET PRO 9125E (16 images, 10 steps)",18,16,10,7,False,SKIPPED
+29,HP OFFICEJET PRO 9125E,error,"DB Error for ID=29 | HP OFFICEJET PRO 9125E: duplicate key value violates unique constraint ""unique_device""
+DETAIL:  Key (devicename)=(HP OFFICEJET PRO 9125E) already exists.
+",24,21,12,7,False,SKIPPED
+30,HP OFFICEJET PRO 9125E,error,"DB Error for ID=30 | HP OFFICEJET PRO 9125E: duplicate key value violates unique constraint ""unique_device""
+DETAIL:  Key (devicename)=(HP OFFICEJET PRO 9125E) already exists.
+",24,21,12,8,False,SKIPPED
+31,XEROX B210,success,"Inserted ID=31 | XEROX B210 (0 images, 11 steps)",14,0,11,7,False,SKIPPED
+32,BROTHER HL-L2365DW,success,"Inserted ID=32 | BROTHER HL-L2365DW (0 images, 12 steps)",13,0,12,7,False,SKIPPED
+33,RICOH SP 230SFNW,success,"Inserted ID=33 | RICOH SP 230SFNW (25 images, 11 steps)",25,25,11,7,False,SKIPPED
+34,BROTHER MCF-L3720CDW,success,"Inserted ID=34 | BROTHER MCF-L3720CDW (13 images, 10 steps)",13,13,10,10,False,SKIPPED
+35,CANON I-SENSYS MF657CDW,success,"Inserted ID=35 | CANON I-SENSYS MF657CDW (18 images, 10 steps)",18,18,10,10,False,SKIPPED
+36,BROTHER HL-L2461DN,success,"Inserted ID=36 | BROTHER HL-L2461DN (15 images, 11 steps)",15,15,11,6,False,SKIPPED
+37,HP LASERJET MFP M141W,success,"Inserted ID=37 | HP LASERJET MFP M141W (25 images, 10 steps)",25,25,10,6,False,SKIPPED
+38,EPSON WORKFORCE AL-M300DN,success,"Inserted ID=38 | EPSON WORKFORCE AL-M300DN (16 images, 10 steps)",16,16,10,7,False,SKIPPED
+39,HP LASERJET PRO MFP 4103DW,success,"Inserted ID=39 | HP LASERJET PRO MFP 4103DW (20 images, 11 steps)",20,20,11,8,False,SKIPPED
+40,CANON IMAGECLASS MF289DW,success,"Inserted ID=40 | CANON IMAGECLASS MF289DW (13 images, 11 steps)",13,13,11,8,False,SKIPPED
