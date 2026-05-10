@@ -1,0 +1,27 @@
+{
+  "name": "smartmentor-1",
+  "version": "1.0.0",
+  "description": "SmartMentor Arduino Guide System is an educational data pipeline built around the Arduino UNO R3, designed as part of a graduation project. It focuses on transforming scraped reference data and images into clean, structured resources that can support guide-style and future intelligent mentoring applications.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/SMshamrani/SmartMentor.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/SMshamrani/SmartMentor/issues"
+  },
+  "homepage": "https://github.com/SMshamrani/SmartMentor#readme",
+  "dependencies": {
+    "cors": "^2.8.6",
+    "dotenv": "^17.4.2",
+    "express": "^5.2.1",
+    "pg": "^8.20.0"
+  }
+}
