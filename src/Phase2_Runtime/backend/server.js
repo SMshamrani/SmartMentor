@@ -249,30 +249,52 @@ app.post('/scan-printer', upload.single('image'), async (req, res) => {
       });
     }
 
+    // =========================
+    // NOT FOUND → ASK LLM
+    // =========================
+
     const llmResponse = await client.responses.create({
       model: 'gpt-4.1-mini',
       input: `
-Generate a printer setup and troubleshooting guide
-for this printer model:
+Generate complete structured printer data for this printer model:
 
 ${printerModel}
 
-Return JSON only using this structure:
+Return JSON only.
+Do not use markdown.
+Do not use code blocks.
+
+Use exactly this structure:
 
 {
   "device_name": "${printerModel}",
   "device_type": "Printer",
-  "guide_title": "${printerModel} Setup and Troubleshooting Guide",
-  "steps": [
-    "",
-    "",
-    ""
-  ]
+  "components": [
+    {
+      "component_name": "",
+      "description": ""
+    }
+  ],
+  "guide": {
+    "title": "${printerModel} Setup and Troubleshooting Guide",
+    "steps": [
+      {
+        "step_number": 1,
+        "description": ""
+      }
+    ]
+  }
 }
+
+Requirements:
+- Include 5 to 8 realistic printer components.
+- Include 6 to 10 setup and troubleshooting steps.
+- Steps must be beginner friendly.
+- Return valid JSON only.
 `,
     });
 
-    let generatedGuideText = llmResponse.output_text;
+    let generatedGuideText = llmResponse.output_text.trim();
 
     generatedGuideText = generatedGuideText
       .replace('```json', '')
@@ -311,32 +333,62 @@ Return JSON only using this structure:
       deviceId = insertDevice.rows[0].deviceid;
     }
 
-    const insertGuide = await pool.query(
+    const existingGuide = await pool.query(
       `
-      INSERT INTO guides (deviceid, title, datecreated)
-      VALUES ($1, $2, CURRENT_DATE)
-      RETURNING guideid
+      SELECT guideid
+      FROM guides
+      WHERE deviceid = $1
+      LIMIT 1
       `,
-      [
-        deviceId,
-        parsedGuide.guide_title,
-      ]
+      [deviceId]
     );
 
-    const guideId = insertGuide.rows[0].guideid;
+    let guideId;
 
-    for (let i = 0; i < parsedGuide.steps.length; i++) {
-      await pool.query(
+    if (existingGuide.rows.length > 0) {
+      guideId = existingGuide.rows[0].guideid;
+    } else {
+      const insertGuide = await pool.query(
         `
-        INSERT INTO steps (guideid, stepnumber, description)
-        VALUES ($1, $2, $3)
+        INSERT INTO guides (deviceid, title, datecreated)
+        VALUES ($1, $2, CURRENT_DATE)
+        RETURNING guideid
         `,
         [
-          guideId,
-          i + 1,
-          parsedGuide.steps[i],
+          deviceId,
+          parsedGuide.guide.title,
         ]
       );
+
+      guideId = insertGuide.rows[0].guideid;
+
+      for (const component of parsedGuide.components) {
+        await pool.query(
+          `
+          INSERT INTO components (deviceid, componentname, description)
+          VALUES ($1, $2, $3)
+          `,
+          [
+            deviceId,
+            component.component_name,
+            component.description,
+          ]
+        );
+      }
+
+      for (const step of parsedGuide.guide.steps) {
+        await pool.query(
+          `
+          INSERT INTO steps (guideid, stepnumber, description)
+          VALUES ($1, $2, $3)
+          `,
+          [
+            guideId,
+            step.step_number,
+            step.description,
+          ]
+        );
+      }
     }
 
     return res.status(200).json({
@@ -417,11 +469,22 @@ app.get('/devices/:id/guide', async (req, res) => {
       [guide.guideid]
     );
 
+    const componentsResult = await pool.query(
+      `
+      SELECT componentid, componentname, description
+      FROM components
+      WHERE deviceid = $1
+      ORDER BY componentid ASC
+      `,
+      [id]
+    );
+
     res.status(200).json({
       success: true,
       device: deviceResult.rows[0],
       guide: guide,
       steps: stepsResult.rows,
+      components: componentsResult.rows,
     });
 
   } catch (error) {
@@ -436,7 +499,6 @@ app.get('/devices/:id/guide', async (req, res) => {
 
 // =========================
 // USER OPEN DEVICE
-// يسجل أن المستخدم فتح طابعة معينة
 // =========================
 
 app.post('/user-progress/open-device', async (req, res) => {
@@ -507,7 +569,6 @@ app.post('/user-progress/open-device', async (req, res) => {
 
 // =========================
 // GET USER RECENT DEVICES
-// يجيب آخر الطابعات التي فتحها المستخدم
 // =========================
 
 app.get('/users/:userId/recent-devices', async (req, res) => {
@@ -633,7 +694,6 @@ app.post('/user-progress/update', async (req, res) => {
 
 // =========================
 // GENERAL RECENT DEVICES
-// للاختبار فقط: يجيب آخر أجهزة موجودة بالداتابيس
 // =========================
 
 app.get('/recent-devices', async (req, res) => {
@@ -668,6 +728,10 @@ app.get('/recent-devices', async (req, res) => {
     });
   }
 });
+
+// =========================
+// FEEDBACK
+// =========================
 
 app.post('/feedback', async (req, res) => {
   try {

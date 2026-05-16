@@ -76,6 +76,31 @@ class _HomeScreenState extends State<HomeScreen> {
     }).toList();
   }
 
+  void _openSettings() {
+    Navigator.pushNamed(
+      context,
+      '/settings',
+      arguments: {
+        'userId': widget.userId,
+        'userName': widget.userName,
+        'userEmail': widget.userEmail,
+      },
+    );
+  }
+
+  void _openScan() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => ScanScreen(
+          userId: widget.userId,
+          userName: widget.userName,
+          userEmail: widget.userEmail,
+        ),
+      ),
+    ).then((_) => _loadRecentDevices());
+  }
+
   @override
   Widget build(BuildContext context) {
     final firstLetter = widget.userName.isNotEmpty
@@ -106,13 +131,17 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
           Padding(
             padding: const EdgeInsets.only(right: 15),
-            child: CircleAvatar(
-              backgroundColor: AppStyles.primary,
-              child: Text(
-                firstLetter,
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontWeight: FontWeight.bold,
+            child: InkWell(
+              borderRadius: BorderRadius.circular(100),
+              onTap: _openSettings,
+              child: CircleAvatar(
+                backgroundColor: AppStyles.primary,
+                child: Text(
+                  firstLetter,
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
               ),
             ),
@@ -289,14 +318,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       borderRadius: BorderRadius.circular(16),
                     ),
                   ),
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const ScanScreen(),
-                      ),
-                    ).then((_) => _loadRecentDevices());
-                  },
+                  onPressed: _openScan,
                   icon: const Icon(Icons.camera_alt_rounded),
                   label: const Text(
                     "Start Scanning",
@@ -342,6 +364,8 @@ class _HomeScreenState extends State<HomeScreen> {
             'deviceId': deviceId,
             'source': source,
             'userId': widget.userId,
+            'userName': widget.userName,
+            'userEmail': widget.userEmail,
           },
         ).then((_) => _loadRecentDevices());
       },
@@ -464,23 +488,12 @@ class _HomeScreenState extends State<HomeScreen> {
     return GestureDetector(
       onTap: () {
         if (index == 3) {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => SettingsScreen(
-                userName: widget.userName,
-                userEmail: widget.userEmail,
-              ),
-            ),
-          );
+          _openSettings();
           return;
         }
 
         if (index == 1) {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => const ScanScreen()),
-          ).then((_) => _loadRecentDevices());
+          _openScan();
           return;
         }
 

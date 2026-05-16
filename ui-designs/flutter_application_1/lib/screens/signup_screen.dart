@@ -47,6 +47,7 @@ class _SignupScreenState extends State<SignupScreen> {
           context,
           '/home',
           arguments: {
+            'userid': user['userid'],
             'name': user['name'] ?? 'User',
             'email': user['email'] ?? '',
           },

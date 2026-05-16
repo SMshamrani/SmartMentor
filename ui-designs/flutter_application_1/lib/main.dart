@@ -7,6 +7,7 @@ import 'screens/signup_screen.dart';
 import 'screens/home_screen.dart';
 import 'screens/device_detail_screen.dart';
 import 'screens/guided_mode_screen.dart';
+import 'screens/settings_screen.dart';
 
 void main() {
   runApp(const SmartMentorApp());
@@ -41,6 +42,7 @@ class SmartMentorApp extends StatelessWidget {
 
         '/device-detail': (context) => const DeviceDetailScreen(),
         '/guided-mode': (context) => const GuidedModeScreen(),
+        '/settings': (context) => const SettingsScreen(),
       },
     );
   }

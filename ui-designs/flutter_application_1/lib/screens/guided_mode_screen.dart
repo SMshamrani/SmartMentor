@@ -19,6 +19,9 @@ class _GuidedModeScreenState extends State<GuidedModeScreen>
   int deviceId = 0;
   int guideId = 0;
 
+  String userName = 'User';
+  String userEmail = '';
+
   String deviceName = '';
   String guideTitle = '';
 
@@ -28,7 +31,6 @@ class _GuidedModeScreenState extends State<GuidedModeScreen>
   int completedSteps = 0;
 
   bool _saving = false;
-
   int selectedRating = 0;
 
   final TextEditingController reviewController = TextEditingController();
@@ -69,6 +71,9 @@ class _GuidedModeScreenState extends State<GuidedModeScreen>
         ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
 
     userId = args['userId'] ?? 1;
+    userName = args['userName'] ?? 'User';
+    userEmail = args['userEmail'] ?? '';
+
     deviceId = args['deviceId'];
     guideId = args['guideId'] ?? 0;
 
@@ -102,29 +107,20 @@ class _GuidedModeScreenState extends State<GuidedModeScreen>
   }
 
   Future<void> _submitFeedback() async {
-    print("GUIDE ID: $guideId");
-    print("USER ID: $userId");
-    print("RATING: $selectedRating");
+    if (selectedRating == 0) return;
 
     try {
       await http.post(
         Uri.parse('http://10.0.2.2:3000/feedback'),
-
         headers: {'Content-Type': 'application/json'},
-
         body: jsonEncode({
           'userId': userId,
-
           'guideId': guideId,
-
           'rating': selectedRating,
-
           'comment': reviewController.text.trim(),
         }),
       );
-    } catch (e) {
-      print(e);
-    }
+    } catch (_) {}
   }
 
   Future<void> _nextStep() async {
@@ -161,6 +157,15 @@ class _GuidedModeScreenState extends State<GuidedModeScreen>
     });
   }
 
+  void _goHome() {
+    Navigator.pushNamedAndRemoveUntil(
+      context,
+      '/home',
+      (route) => false,
+      arguments: {'userid': userId, 'name': userName, 'email': userEmail},
+    );
+  }
+
   void _showCompletedDialog() {
     showDialog(
       context: context,
@@ -179,7 +184,6 @@ class _GuidedModeScreenState extends State<GuidedModeScreen>
                     );
                   },
                 ),
-
                 AlertDialog(
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(28),
@@ -201,12 +205,10 @@ class _GuidedModeScreenState extends State<GuidedModeScreen>
                             height: 1.5,
                           ),
                         ),
-
                         const SizedBox(height: 20),
-
                         Container(
                           padding: const EdgeInsets.all(18),
-                          decoration: BoxDecoration(
+                          decoration: const BoxDecoration(
                             color: AppStyles.primaryLight,
                             shape: BoxShape.circle,
                           ),
@@ -216,9 +218,7 @@ class _GuidedModeScreenState extends State<GuidedModeScreen>
                             size: 52,
                           ),
                         ),
-
                         const SizedBox(height: 22),
-
                         const Text(
                           'Rate this guide',
                           style: TextStyle(
@@ -226,9 +226,7 @@ class _GuidedModeScreenState extends State<GuidedModeScreen>
                             color: AppStyles.textDark,
                           ),
                         ),
-
                         const SizedBox(height: 10),
-
                         Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: List.generate(5, (index) {
@@ -250,9 +248,7 @@ class _GuidedModeScreenState extends State<GuidedModeScreen>
                             );
                           }),
                         ),
-
                         const SizedBox(height: 12),
-
                         TextField(
                           controller: reviewController,
                           maxLines: 3,
@@ -271,7 +267,7 @@ class _GuidedModeScreenState extends State<GuidedModeScreen>
                   ),
                   actionsAlignment: MainAxisAlignment.center,
                   actions: [
-                    ElevatedButton(
+                    ElevatedButton.icon(
                       style: AppStyles.primaryButton,
                       onPressed: () async {
                         await _submitFeedback();
@@ -279,9 +275,11 @@ class _GuidedModeScreenState extends State<GuidedModeScreen>
                         if (!mounted) return;
 
                         Navigator.pop(context);
-                        Navigator.pop(context);
                       },
-                      child: const Text('Finish'),
+
+                      icon: const Icon(Icons.check_circle_rounded),
+
+                      label: const Text('Finish'),
                     ),
                   ],
                 ),
@@ -331,9 +329,25 @@ class _GuidedModeScreenState extends State<GuidedModeScreen>
                           ),
                         ],
                       ),
+                      if (progressPercent == 100)
+                        Padding(
+                          padding: const EdgeInsets.only(top: 14),
 
+                          child: SizedBox(
+                            width: double.infinity,
+
+                            child: ElevatedButton.icon(
+                              style: AppStyles.primaryButton,
+
+                              onPressed: _goHome,
+
+                              icon: const Icon(Icons.home_rounded),
+
+                              label: const Text('Back to Home'),
+                            ),
+                          ),
+                        ),
                       const SizedBox(height: 24),
-
                       Container(
                         padding: const EdgeInsets.all(22),
                         decoration: AppStyles.cardDecoration,
@@ -369,9 +383,7 @@ class _GuidedModeScreenState extends State<GuidedModeScreen>
                           ],
                         ),
                       ),
-
                       const SizedBox(height: 26),
-
                       Expanded(
                         child: Container(
                           width: double.infinity,
@@ -409,9 +421,7 @@ class _GuidedModeScreenState extends State<GuidedModeScreen>
                                   ),
                                 ),
                               ),
-
                               const SizedBox(height: 28),
-
                               const Text(
                                 'Your next step',
                                 style: TextStyle(
@@ -420,9 +430,7 @@ class _GuidedModeScreenState extends State<GuidedModeScreen>
                                   fontWeight: FontWeight.w700,
                                 ),
                               ),
-
                               const SizedBox(height: 12),
-
                               Expanded(
                                 child: SingleChildScrollView(
                                   child: Text(
@@ -440,9 +448,7 @@ class _GuidedModeScreenState extends State<GuidedModeScreen>
                           ),
                         ),
                       ),
-
                       const SizedBox(height: 24),
-
                       Row(
                         children: [
                           Expanded(
@@ -467,9 +473,7 @@ class _GuidedModeScreenState extends State<GuidedModeScreen>
                               ),
                             ),
                           ),
-
                           const SizedBox(width: 14),
-
                           Expanded(
                             child: ElevatedButton.icon(
                               onPressed: _saving ? null : _nextStep,

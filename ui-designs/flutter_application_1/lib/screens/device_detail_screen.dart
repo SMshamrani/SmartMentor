@@ -19,6 +19,9 @@ class _DeviceDetailScreenState extends State<DeviceDetailScreen> {
   int userId = 1;
   int guideId = 0;
 
+  String userName = 'User';
+  String userEmail = '';
+
   String deviceName = '';
   String guideTitle = '';
   String source = '';
@@ -34,6 +37,8 @@ class _DeviceDetailScreenState extends State<DeviceDetailScreen> {
 
     deviceId = args['deviceId'];
     userId = args['userId'] ?? 1;
+    userName = args['userName'] ?? 'User';
+    userEmail = args['userEmail'] ?? '';
     source = args['source'] ?? 'database';
 
     _loadGuide();
@@ -101,7 +106,6 @@ class _DeviceDetailScreenState extends State<DeviceDetailScreen> {
                         ],
                       ),
                     ),
-
                     Expanded(
                       child: SingleChildScrollView(
                         padding: const EdgeInsets.symmetric(horizontal: 22),
@@ -177,9 +181,7 @@ class _DeviceDetailScreenState extends State<DeviceDetailScreen> {
                                 ],
                               ),
                             ),
-
                             const SizedBox(height: 26),
-
                             SizedBox(
                               width: double.infinity,
                               child: ElevatedButton.icon(
@@ -190,6 +192,8 @@ class _DeviceDetailScreenState extends State<DeviceDetailScreen> {
                                     '/guided-mode',
                                     arguments: {
                                       'userId': userId,
+                                      'userName': userName,
+                                      'userEmail': userEmail,
                                       'deviceId': deviceId,
                                       'deviceName': deviceName,
                                       'guideTitle': guideTitle,
@@ -202,9 +206,7 @@ class _DeviceDetailScreenState extends State<DeviceDetailScreen> {
                                 label: const Text('Start Guided Mode'),
                               ),
                             ),
-
                             const SizedBox(height: 28),
-
                             const Text(
                               'Smart Guide Preview',
                               style: TextStyle(
@@ -222,15 +224,12 @@ class _DeviceDetailScreenState extends State<DeviceDetailScreen> {
                                 height: 1.5,
                               ),
                             ),
-
                             const SizedBox(height: 20),
-
                             for (int i = 0; i < steps.length; i++)
                               _StepCard(
                                 number: steps[i]['stepnumber'],
                                 text: steps[i]['description'],
                               ),
-
                             const SizedBox(height: 30),
                           ],
                         ),
