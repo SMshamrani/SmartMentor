@@ -4,6 +4,7 @@ const { Pool } = require('pg');
 const multer = require('multer');
 const fs = require('fs');
 const OpenAI = require('openai');
+const bcrypt = require('bcrypt');
 
 require('dotenv').config();
 
@@ -40,7 +41,7 @@ app.post('/users', async (req, res) => {
     let { name, email, password } = req.body;
 
     name = name?.trim();
-    email = email?.trim();
+    email = email?.trim().toLowerCase();
     password = password?.trim();
 
     if (!name || !email || !password) {
@@ -58,7 +59,7 @@ app.post('/users', async (req, res) => {
     }
 
     const checkUser = await pool.query(
-      'SELECT * FROM users WHERE email = $1',
+      'SELECT userid FROM users WHERE email = $1',
       [email]
     );
 
@@ -66,22 +67,23 @@ app.post('/users', async (req, res) => {
       return res.status(409).json({ message: 'Email already exists' });
     }
 
+    const hashedPassword = await bcrypt.hash(password, 10);
+
     const result = await pool.query(
       `
       INSERT INTO users (name, email, password)
       VALUES ($1, $2, $3)
       RETURNING userid, name, email
       `,
-      [name, email, password]
+      [name, email, hashedPassword]
     );
 
     res.status(201).json({
       message: 'User created successfully',
       user: result.rows[0],
     });
-
   } catch (error) {
-    console.error(error);
+    console.error('Register Error:', error.message);
     res.status(500).json({ message: 'Server Error' });
   }
 });
@@ -94,7 +96,7 @@ app.post('/login', async (req, res) => {
   try {
     let { email, password } = req.body;
 
-    email = email?.trim();
+    email = email?.trim().toLowerCase();
     password = password?.trim();
 
     if (!email || !password) {
@@ -105,11 +107,11 @@ app.post('/login', async (req, res) => {
 
     const result = await pool.query(
       `
-      SELECT userid, name, email
+      SELECT userid, name, email, password
       FROM users
-      WHERE email = $1 AND password = $2
+      WHERE email = $1
       `,
-      [email, password]
+      [email]
     );
 
     if (result.rows.length === 0) {
@@ -118,13 +120,26 @@ app.post('/login', async (req, res) => {
       });
     }
 
+    const user = result.rows[0];
+
+    const isMatch = await bcrypt.compare(password, user.password);
+
+    if (!isMatch) {
+      return res.status(401).json({
+        message: 'Invalid email or password',
+      });
+    }
+
     res.status(200).json({
       message: 'Login successful',
-      user: result.rows[0],
+      user: {
+        userid: user.userid,
+        name: user.name,
+        email: user.email,
+      },
     });
-
   } catch (error) {
-    console.error(error);
+    console.error('Login Error:', error.message);
     res.status(500).json({ message: 'Server Error' });
   }
 });
@@ -208,7 +223,7 @@ app.post('/scan-printer', upload.single('image'), async (req, res) => {
             {
               type: 'input_text',
               text:
-                'Identify the printer model from this image. Return ONLY the printer model name. If unclear return UNKNOWN.',
+                'Identify the device brand and model from this image. Return ONLY the device name/model. If unclear return UNKNOWN.',
             },
             {
               type: 'input_image',
@@ -226,7 +241,7 @@ app.post('/scan-printer', upload.single('image'), async (req, res) => {
         success: false,
         source: 'vlm',
         printer_model: printerModel,
-        message: 'Printer model could not be identified.',
+        message: 'Device model could not be identified.',
       });
     }
 
@@ -256,7 +271,7 @@ app.post('/scan-printer', upload.single('image'), async (req, res) => {
     const llmResponse = await client.responses.create({
       model: 'gpt-4.1-mini',
       input: `
-Generate complete structured printer data for this printer model:
+Generate complete structured device data for this device model:
 
 ${printerModel}
 
@@ -268,7 +283,7 @@ Use exactly this structure:
 
 {
   "device_name": "${printerModel}",
-  "device_type": "Printer",
+  "device_type": "Device",
   "components": [
     {
       "component_name": "",
@@ -287,8 +302,8 @@ Use exactly this structure:
 }
 
 Requirements:
-- Include 5 to 8 realistic printer components.
-- Include 6 to 10 setup and troubleshooting steps.
+- Include 5 to 8 realistic device components.
+- Include 6 to 10 setup/troubleshooting steps.
 - Steps must be beginner friendly.
 - Return valid JSON only.
 `,
@@ -764,6 +779,429 @@ app.post('/feedback', async (req, res) => {
     return res.status(500).json({
       success: false,
       error: error.message,
+    });
+  }
+});
+
+
+// =========================
+// SEARCH DEVICES FROM DATABASE
+// =========================
+
+app.get('/devices/search', async (req, res) => {
+  try {
+    const query = req.query.q?.trim();
+
+    if (!query) {
+      return res.status(400).json({
+        success: false,
+        message: 'Search query is required',
+      });
+    }
+
+    const result = await pool.query(
+      `
+      SELECT
+        d.deviceid,
+        d.devicename,
+        d.devicetype,
+        g.guideid,
+        g.title AS guide_title
+      FROM devices d
+      LEFT JOIN guides g ON d.deviceid = g.deviceid
+      WHERE d.devicename ILIKE $1
+         OR d.devicetype ILIKE $1
+         OR g.title ILIKE $1
+      ORDER BY d.createdat DESC
+      LIMIT 20
+      `,
+      [`%${query}%`]
+    );
+
+    return res.status(200).json({
+      success: true,
+      devices: result.rows,
+    });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({
+      success: false,
+      message: 'Server Error',
+    });
+  }
+});
+
+// =========================
+// USER NOTIFICATIONS
+// =========================
+
+app.get('/users/:userId/notifications', async (req, res) => {
+  try {
+    const { userId } = req.params;
+
+    const notifications = [];
+
+    const completed = await pool.query(
+      `
+      SELECT d.devicename, up.updatedat
+      FROM userprogress up
+      JOIN devices d ON up.deviceid = d.deviceid
+      WHERE up.userid = $1
+        AND up.status = 'completed'
+      ORDER BY up.updatedat DESC
+      LIMIT 3
+      `,
+      [userId]
+    );
+
+    completed.rows.forEach((row) => {
+      notifications.push({
+        type: 'Device guide completed',
+        title: 'Device guide completed',
+        message: `You completed the guide for ${row.devicename}.`,
+        date: row.updatedat,
+      });
+    });
+
+    const aiGenerated = await pool.query(
+  `
+  SELECT d.devicename, up.updatedat
+  FROM userprogress up
+  JOIN devices d ON up.deviceid = d.deviceid
+  WHERE up.userid = $1
+    AND d.sourceid IS NULL
+  ORDER BY up.updatedat DESC
+  LIMIT 3
+  `,
+  [userId]
+);
+
+aiGenerated.rows.forEach((row) => {
+  notifications.push({
+    type: 'New AI guide generated',
+    title: 'New AI guide generated',
+    message: `A new AI guide was generated for ${row.devicename}.`,
+    date: row.updatedat,
+  });
+});
+
+    
+
+    const incomplete = await pool.query(
+      `
+      SELECT d.devicename, up.progresspercent, up.updatedat
+      FROM userprogress up
+      JOIN devices d ON up.deviceid = d.deviceid
+      WHERE up.userid = $1
+        AND up.progresspercent > 0
+        AND up.progresspercent < 100
+      ORDER BY up.updatedat DESC
+      LIMIT 3
+      `,
+      [userId]
+    );
+
+    incomplete.rows.forEach((row) => {
+      notifications.push({
+        type: 'Incomplete guide reminder',
+        title: 'Incomplete guide reminder',
+        message: `${row.devicename} is ${row.progresspercent}% completed.`,
+        date: row.updatedat,
+      });
+    });
+
+    const feedback = await pool.query(
+      `
+      SELECT f.rating, f.datesubmitted, d.devicename
+      FROM feedback f
+      JOIN guides g ON f.guideid = g.guideid
+      JOIN devices d ON g.deviceid = d.deviceid
+      WHERE f.userid = $1
+      ORDER BY f.datesubmitted DESC
+      LIMIT 3
+      `,
+      [userId]
+    );
+
+    feedback.rows.forEach((row) => {
+      notifications.push({
+        type: 'Feedback submitted',
+        title: 'Feedback submitted',
+        message: `You rated ${row.devicename} guide ${row.rating}/5.`,
+        date: row.datesubmitted,
+      });
+    });
+
+    const recent = await pool.query(
+      `
+      SELECT d.devicename, up.updatedat
+      FROM userprogress up
+      JOIN devices d ON up.deviceid = d.deviceid
+      WHERE up.userid = $1
+        AND up.status = 'opened'
+      ORDER BY up.updatedat DESC
+      LIMIT 3
+      `,
+      [userId]
+    );
+
+    recent.rows.forEach((row) => {
+      notifications.push({
+        type: 'Recently scanned device',
+        title: 'Recently scanned device',
+        message: `${row.devicename} was recently opened or scanned.`,
+        date: row.updatedat,
+      });
+    });
+
+    notifications.sort((a, b) => new Date(b.date) - new Date(a.date));
+
+    return res.status(200).json({
+      success: true,
+      notifications,
+    });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({
+      success: false,
+      message: 'Server Error',
+    });
+  }
+});
+
+
+// =======================================
+// GENERATE DEVICE GUIDE USING AI
+// =======================================
+
+app.post('/generate-device-guide', async (req, res) => {
+
+  try {
+
+    const { deviceName } = req.body;
+
+    if (!deviceName || deviceName.trim() === '') {
+
+      return res.status(400).json({
+
+        success: false,
+
+        message: 'Device name is required',
+      });
+    }
+
+    // ===================================
+    // CHECK IF DEVICE ALREADY EXISTS
+    // ===================================
+
+    const existingDevice = await pool.query(
+
+      `
+      SELECT
+        d.deviceid,
+        d.devicename,
+        d.devicetype,
+        g.guideid,
+        g.title AS guide_title
+      FROM devices d
+      LEFT JOIN guides g
+        ON d.deviceid = g.deviceid
+      WHERE LOWER(d.devicename) = LOWER($1)
+      LIMIT 1
+      `,
+      [deviceName]
+    );
+
+    if (existingDevice.rows.length > 0) {
+
+      return res.status(200).json({
+
+        success: true,
+
+        source: 'database',
+
+        device: existingDevice.rows[0],
+      });
+    }
+
+    // ===================================
+    // GENERATE DEVICE DATA WITH AI
+    // ===================================
+
+    const prompt = `
+Generate complete structured device data for this device:
+
+${deviceName}
+
+Return ONLY valid JSON.
+
+Use exactly this structure:
+
+{
+  "device_name": "${deviceName}",
+  "device_type": "Device",
+  "components": [
+    {
+      "component_name": "",
+      "description": ""
+    }
+  ],
+  "guide": {
+    "title": "${deviceName} Setup and Troubleshooting Guide",
+    "steps": [
+      {
+        "step_number": 1,
+        "description": ""
+      }
+    ]
+  }
+}
+
+Requirements:
+- Include 5 to 8 realistic device components.
+- Include 6 to 10 setup or troubleshooting steps.
+- Beginner friendly explanations.
+- No markdown.
+- No code block.
+- Valid JSON only.
+`;
+
+    const aiResponse = await client.responses.create({
+
+      model: 'gpt-4.1-mini',
+
+      input: prompt,
+    });
+
+    const text = aiResponse.output_text;
+
+    let parsed;
+
+    try {
+
+      parsed = JSON.parse(text);
+
+    } catch {
+
+      return res.status(500).json({
+
+        success: false,
+
+        message: 'AI returned invalid JSON',
+      });
+    }
+
+    // ===================================
+    // INSERT DEVICE
+    // ===================================
+
+    const deviceInsert = await pool.query(
+
+      `
+      INSERT INTO devices
+      (devicename, devicetype)
+      VALUES ($1, $2)
+      RETURNING *
+      `,
+      [
+        parsed.device_name,
+        parsed.device_type,
+      ]
+    );
+
+    const device = deviceInsert.rows[0];
+
+    // ===================================
+    // INSERT COMPONENTS
+    // ===================================
+
+    for (const component of parsed.components) {
+
+      await pool.query(
+
+        `
+        INSERT INTO components
+        (deviceid, componentname, description)
+        VALUES ($1, $2, $3)
+        `,
+        [
+          device.deviceid,
+          component.component_name,
+          component.description,
+        ]
+      );
+    }
+
+    // ===================================
+    // INSERT GUIDE
+    // ===================================
+
+    const guideInsert = await pool.query(
+
+      `
+      INSERT INTO guides
+      (deviceid, title, datecreated)
+      VALUES ($1, $2, CURRENT_DATE)
+      RETURNING *
+      `,
+      [
+        device.deviceid,
+        parsed.guide.title,
+      ]
+    );
+
+    const guide = guideInsert.rows[0];
+
+    // ===================================
+    // INSERT STEPS
+    // ===================================
+
+    for (const step of parsed.guide.steps) {
+
+      await pool.query(
+
+        `
+        INSERT INTO steps
+        (guideid, stepnumber, description)
+        VALUES ($1, $2, $3)
+        `,
+        [
+          guide.guideid,
+          step.step_number,
+          step.description,
+        ]
+      );
+    }
+
+    return res.status(201).json({
+
+      success: true,
+
+      source: 'ai_generated',
+
+      device: {
+
+        deviceid: device.deviceid,
+
+        devicename: device.devicename,
+
+        devicetype: device.devicetype,
+
+        guideid: guide.guideid,
+
+        guide_title: guide.title,
+      },
+    });
+
+  } catch (error) {
+
+    console.error(error);
+
+    return res.status(500).json({
+
+      success: false,
+
+      message: 'Server Error',
     });
   }
 });

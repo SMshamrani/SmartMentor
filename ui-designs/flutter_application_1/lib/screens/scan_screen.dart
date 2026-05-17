@@ -27,7 +27,7 @@ class _ScanScreenState extends State<ScanScreen>
     with SingleTickerProviderStateMixin {
   File? _image;
   bool _isScanning = false;
-  String? _printerModel;
+  String? _deviceModel;
   String? _source;
 
   late AnimationController _scannerController;
@@ -59,14 +59,14 @@ class _ScanScreenState extends State<ScanScreen>
     setState(() {
       _image = File(pickedFile.path);
       _isScanning = true;
-      _printerModel = null;
+      _deviceModel = null;
       _source = null;
     });
 
-    await _scanPrinter(_image!);
+    await _scanDevice(_image!);
   }
 
-  Future<void> _scanPrinter(File imageFile) async {
+  Future<void> _scanDevice(File imageFile) async {
     try {
       final request = http.MultipartRequest('POST', Uri.parse(apiUrl));
 
@@ -82,7 +82,7 @@ class _ScanScreenState extends State<ScanScreen>
 
       setState(() {
         _isScanning = false;
-        _printerModel = data['printer_model'] ?? 'UNKNOWN';
+        _deviceModel = data['printer_model'] ?? 'UNKNOWN';
         _source = data['source'] ?? 'unknown';
       });
 
@@ -111,7 +111,7 @@ class _ScanScreenState extends State<ScanScreen>
       }
 
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Printer Identified: $_printerModel')),
+        SnackBar(content: Text('Device Identified: $_deviceModel')),
       );
     } catch (error) {
       if (!mounted) return;
@@ -122,35 +122,93 @@ class _ScanScreenState extends State<ScanScreen>
 
       ScaffoldMessenger.of(
         context,
-      ).showSnackBar(SnackBar(content: Text('Scan failed: $error')));
+      ).showSnackBar(SnackBar(content: Text('Scan failed. Please try again.')));
     }
+  }
+
+  void _showScanSearchSheet() {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.transparent,
+      builder: (context) {
+        return Container(
+          padding: const EdgeInsets.all(22),
+          decoration: const BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.vertical(top: Radius.circular(32)),
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                width: 50,
+                height: 5,
+                decoration: BoxDecoration(
+                  color: AppStyles.primaryLight,
+                  borderRadius: BorderRadius.circular(20),
+                ),
+              ),
+              const SizedBox(height: 22),
+              const Text(
+                "Search Device",
+                style: TextStyle(
+                  fontSize: 24,
+                  fontWeight: FontWeight.w900,
+                  color: AppStyles.textDark,
+                ),
+              ),
+              const SizedBox(height: 14),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                decoration: AppStyles.cardDecoration.copyWith(
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                child: const TextField(
+                  decoration: InputDecoration(
+                    hintText: "Type device name or model...",
+                    border: InputBorder.none,
+                    icon: Icon(Icons.search_rounded, color: AppStyles.primary),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 18),
+              const Text(
+                "Manual database search will be connected later. For now, use camera or gallery scan to identify devices with AI.",
+                textAlign: TextAlign.center,
+                style: TextStyle(color: AppStyles.textLight, height: 1.5),
+              ),
+              const SizedBox(height: 14),
+            ],
+          ),
+        );
+      },
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       extendBodyBehindAppBar: true,
-
       appBar: AppBar(
         title: const Text(
           "Smart Scanner",
           style: TextStyle(color: Colors.white),
         ),
-
         backgroundColor: Colors.transparent,
-
         elevation: 0,
-
         iconTheme: const IconThemeData(color: Colors.white),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.search_rounded, color: Colors.white),
+            onPressed: _showScanSearchSheet,
+          ),
+        ],
       ),
-
       body: Stack(
         children: [
-          // ===== BACKGROUND =====
           Container(
             width: double.infinity,
             height: double.infinity,
-
             decoration: const BoxDecoration(
               gradient: LinearGradient(
                 colors: [AppStyles.textDark, Color(0xFF111827)],
@@ -158,18 +216,13 @@ class _ScanScreenState extends State<ScanScreen>
                 end: Alignment.bottomCenter,
               ),
             ),
-
             child: _image != null
-                // ===== IMAGE PREVIEW =====
                 ? Center(
                     child: AnimatedContainer(
                       duration: const Duration(milliseconds: 400),
-
                       margin: const EdgeInsets.fromLTRB(22, 100, 22, 220),
-
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(34),
-
                         boxShadow: [
                           BoxShadow(
                             color: AppStyles.primary.withOpacity(0.35),
@@ -178,18 +231,12 @@ class _ScanScreenState extends State<ScanScreen>
                           ),
                         ],
                       ),
-
                       clipBehavior: Clip.antiAlias,
-
                       child: Stack(
                         fit: StackFit.expand,
-
                         children: [
                           Container(color: Colors.black),
-
                           Image.file(_image!, fit: BoxFit.contain),
-
-                          // subtle overlay
                           Container(
                             decoration: BoxDecoration(
                               gradient: LinearGradient(
@@ -206,45 +253,36 @@ class _ScanScreenState extends State<ScanScreen>
                       ),
                     ),
                   )
-                // ===== EMPTY STATE =====
                 : Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Container(
                         padding: const EdgeInsets.all(30),
-
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
-
                           color: Colors.white.withOpacity(0.05),
-
                           border: Border.all(color: Colors.white12, width: 1.5),
                         ),
-
                         child: const Icon(
                           Icons.document_scanner_rounded,
                           color: Colors.white70,
                           size: 85,
                         ),
                       ),
-
                       const SizedBox(height: 26),
-
                       const Text(
-                        "AI Printer Scanner",
+                        "AI Device Scanner",
                         style: TextStyle(
                           color: Colors.white,
                           fontSize: 28,
                           fontWeight: FontWeight.w900,
                         ),
                       ),
-
                       const SizedBox(height: 12),
-
                       const Padding(
                         padding: EdgeInsets.symmetric(horizontal: 40),
                         child: Text(
-                          "Capture or upload a printer image and let SmartMentor identify it instantly using AI.",
+                          "Capture or upload a device image and let SmartMentor identify it instantly using AI.",
                           textAlign: TextAlign.center,
                           style: TextStyle(
                             color: Colors.white60,
@@ -256,11 +294,7 @@ class _ScanScreenState extends State<ScanScreen>
                     ],
                   ),
           ),
-
-          // ===== SCANNER =====
           if (_image != null) _buildScannerOverlay(),
-
-          // ===== CONTROL PANEL =====
           Align(alignment: Alignment.bottomCenter, child: _buildControlPanel()),
         ],
       ),
@@ -270,22 +304,17 @@ class _ScanScreenState extends State<ScanScreen>
   Widget _buildScannerOverlay() {
     return Stack(
       children: [
-        // ===== FRAME =====
         Center(
           child: Container(
             width: 250,
             height: 250,
-
             margin: const EdgeInsets.only(bottom: 60),
-
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(28),
-
               border: Border.all(
                 color: Colors.white.withOpacity(0.9),
                 width: 2,
               ),
-
               boxShadow: [
                 BoxShadow(
                   color: AppStyles.primary.withOpacity(0.35),
@@ -296,27 +325,20 @@ class _ScanScreenState extends State<ScanScreen>
             ),
           ),
         ),
-
-        // ===== SCANNING LINE =====
         if (_isScanning)
           AnimatedBuilder(
             animation: _scannerController,
-
             builder: (context, child) {
               return Positioned(
                 top:
                     MediaQuery.of(context).size.height * 0.28 +
                     (_scannerController.value * 250),
-
                 left: MediaQuery.of(context).size.width * 0.5 - 125,
-
                 child: Container(
                   width: 250,
                   height: 3,
-
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(20),
-
                     boxShadow: [
                       BoxShadow(
                         color: AppStyles.primary.withOpacity(0.9),
@@ -324,7 +346,6 @@ class _ScanScreenState extends State<ScanScreen>
                         spreadRadius: 3,
                       ),
                     ],
-
                     gradient: const LinearGradient(
                       colors: [
                         Colors.transparent,
@@ -353,16 +374,16 @@ class _ScanScreenState extends State<ScanScreen>
         children: [
           Text(
             _isScanning
-                ? "Analyzing Printer..."
-                : _printerModel != null
-                ? "Printer Identified"
-                : "Scan Your Printer",
+                ? "Analyzing Device..."
+                : _deviceModel != null
+                ? "Device Identified"
+                : "Scan Your Device",
             style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
           ),
-          if (_printerModel != null) ...[
+          if (_deviceModel != null) ...[
             const SizedBox(height: 12),
             Text(
-              _printerModel!,
+              _deviceModel!,
               textAlign: TextAlign.center,
               style: const TextStyle(
                 fontSize: 16,

@@ -110,7 +110,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   const SizedBox(height: 10),
 
                   const Text(
-                    "Sign in to continue your smart printer guidance experience.",
+                    "Sign in to continue your AI-powered device guidance experience.",
 
                     textAlign: TextAlign.center,
 

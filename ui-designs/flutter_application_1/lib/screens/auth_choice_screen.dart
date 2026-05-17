@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../app_styles.dart';
+import '../widgets/app_logo.dart';
 
 class AuthChoiceScreen extends StatelessWidget {
   const AuthChoiceScreen({super.key});
@@ -15,7 +16,6 @@ class AuthChoiceScreen extends StatelessWidget {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                
                 const Spacer(flex: 2),
 
                 Container(
@@ -32,11 +32,7 @@ class AuthChoiceScreen extends StatelessWidget {
                       end: Alignment.bottomRight,
                     ),
                   ),
-                  child: const Icon(
-                    Icons.devices_rounded,
-                    size: 90,
-                    color: AppStyles.primary,
-                  ),
+                  child: AppLogo(size: 135),
                 ),
 
                 const SizedBox(height: 35),
@@ -54,7 +50,7 @@ class AuthChoiceScreen extends StatelessWidget {
                 const SizedBox(height: 12),
 
                 const Text(
-                  "The most advanced platform to recognize and manage your smart devices in one place.",
+                  "Identify, learn, and manage smart devices with AI.",
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     fontSize: 15,
@@ -76,8 +72,7 @@ class AuthChoiceScreen extends StatelessWidget {
                       ),
                       elevation: 2,
                     ),
-                    onPressed: () =>
-                        Navigator.pushNamed(context, '/login'),
+                    onPressed: () => Navigator.pushNamed(context, '/login'),
                     child: const Text(
                       "Get Started",
                       style: TextStyle(
@@ -92,8 +87,7 @@ class AuthChoiceScreen extends StatelessWidget {
                 const SizedBox(height: 12),
 
                 TextButton(
-                  onPressed: () =>
-                      Navigator.pushNamed(context, '/signup'),
+                  onPressed: () => Navigator.pushNamed(context, '/signup'),
                   child: const Text(
                     "Create an account",
                     style: TextStyle(

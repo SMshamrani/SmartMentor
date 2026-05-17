@@ -43,3 +43,23 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
+
+
+
+
+# Environment variables
+.env
+*.env
+
+# Backend sensitive files
+node_modules/
+uploads/
+
+# Flutter build/cache
+.flutter-plugins
+.flutter-plugins-dependencies
+.dart_tool/
+build/
+
+# VS Code
+.vscode/
