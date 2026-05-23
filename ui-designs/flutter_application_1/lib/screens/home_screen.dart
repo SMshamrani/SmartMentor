@@ -4,7 +4,6 @@ import 'package:http/http.dart' as http;
 
 import '../app_styles.dart';
 import 'scan_screen.dart';
-import 'search_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   final int userId;
@@ -105,19 +104,23 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
 
-  String _formatTimeAgo(String? dateString) {
-    if (dateString == null) return 'Recently';
+  String _formatTimeAgo(dynamic secondsAgo) {
+    if (secondsAgo == null) return 'Recently';
 
-    final date = DateTime.tryParse(dateString);
-    if (date == null) return 'Recently';
+    final seconds = int.tryParse(secondsAgo.toString()) ?? 0;
 
-    final diff = DateTime.now().difference(date.toLocal());
+    if (seconds < 60) return 'Just now';
 
-    if (diff.inMinutes < 1) return 'Just now';
-    if (diff.inMinutes < 60) return '${diff.inMinutes} min ago';
-    if (diff.inHours < 24) return '${diff.inHours}h ago';
-    if (diff.inDays == 1) return 'Yesterday';
-    return '${diff.inDays} days ago';
+    final minutes = seconds ~/ 60;
+    if (minutes < 60) return '$minutes min ago';
+
+    final hours = minutes ~/ 60;
+    if (hours < 24) return '${hours}h ago';
+
+    final days = hours ~/ 24;
+    if (days == 1) return 'Yesterday';
+
+    return '$days days ago';
   }
 
   List<dynamic> get unfinishedDevices {
@@ -164,7 +167,16 @@ class _HomeScreenState extends State<HomeScreen> {
           userEmail: widget.userEmail,
         ),
       ),
-    ).then((_) => _loadRecentDevices());
+    ).then((result) {
+      _loadRecentDevices();
+
+      if (result == 'not_found') {
+        setState(() {
+          _showSearch = true;
+          _currentIndex = 2;
+        });
+      }
+    });
   }
 
   Future<void> _showNotificationsSheet() async {
@@ -178,7 +190,6 @@ class _HomeScreenState extends State<HomeScreen> {
       );
 
       final data = jsonDecode(response.body);
-
       notifications = data['notifications'] ?? [];
     } catch (e) {
       notifications = [];
@@ -193,53 +204,125 @@ class _HomeScreenState extends State<HomeScreen> {
     showModalBottomSheet(
       context: context,
       backgroundColor: Colors.transparent,
+      isScrollControlled: true,
       builder: (context) {
-        return Container(
-          padding: const EdgeInsets.all(22),
-          decoration: const BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.vertical(top: Radius.circular(32)),
-          ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Container(
-                width: 50,
-                height: 5,
-                decoration: BoxDecoration(
-                  color: AppStyles.primaryLight,
-                  borderRadius: BorderRadius.circular(20),
+        return DraggableScrollableSheet(
+          initialChildSize: 0.85,
+          minChildSize: 0.4,
+          maxChildSize: 0.95,
+          builder: (context, scrollController) {
+            return Container(
+              decoration: const BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.vertical(top: Radius.circular(32)),
+              ),
+              child: ClipRRect(
+                borderRadius: const BorderRadius.vertical(
+                  top: Radius.circular(32),
+                ),
+                child: ListView.builder(
+                  controller: scrollController,
+                  padding: const EdgeInsets.all(22),
+                  itemCount: isLoadingNotifications
+                      ? 1
+                      : (notifications.isEmpty ? 1 : notifications.length + 1),
+                  itemBuilder: (context, i) {
+                    if (i == 0) {
+                      return Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Container(
+                            width: 50,
+                            height: 5,
+                            decoration: BoxDecoration(
+                              color: const Color.fromARGB(255, 234, 255, 252),
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                          ),
+                          const SizedBox(height: 20),
+                          const Text(
+                            "Notifications",
+                            style: TextStyle(
+                              fontSize: 24,
+                              fontWeight: FontWeight.w900,
+                              color: AppStyles.textDark,
+                            ),
+                          ),
+                          const SizedBox(height: 20),
+                          if (isLoadingNotifications)
+                            const Padding(
+                              padding: EdgeInsets.all(20),
+                              child: Center(child: CircularProgressIndicator()),
+                            ),
+                          if (!isLoadingNotifications && notifications.isEmpty)
+                            const Padding(
+                              padding: EdgeInsets.all(20),
+                              child: Center(
+                                child: Text("No notifications yet."),
+                              ),
+                            ),
+                        ],
+                      );
+                    }
+
+                    final n = notifications[i - 1];
+
+                    return Container(
+                      margin: const EdgeInsets.only(bottom: 14),
+                      padding: const EdgeInsets.all(14),
+                      decoration: BoxDecoration(
+                        color: AppStyles.primaryLight,
+                        borderRadius: BorderRadius.circular(22),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.05),
+                            blurRadius: 10,
+                            offset: const Offset(0, 4),
+                          ),
+                        ],
+                      ),
+                      child: Row(
+                        children: [
+                          CircleAvatar(
+                            backgroundColor: AppStyles.primary,
+                            child: Icon(
+                              _notificationIcon(n['type']),
+                              color: Colors.white,
+                              size: 20,
+                            ),
+                          ),
+                          const SizedBox(width: 14),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  n['title'] ?? 'Notification',
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.w900,
+                                    color: AppStyles.textDark,
+                                  ),
+                                ),
+                                const SizedBox(height: 4),
+                                Text(
+                                  n['message'] ?? '',
+                                  style: const TextStyle(
+                                    fontSize: 13,
+                                    color: AppStyles.textLight,
+                                    height: 1.4,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    );
+                  },
                 ),
               ),
-              const SizedBox(height: 22),
-              const Text(
-                "Notifications",
-                style: TextStyle(
-                  fontSize: 24,
-                  fontWeight: FontWeight.w900,
-                  color: AppStyles.textDark,
-                ),
-              ),
-              const SizedBox(height: 20),
-              if (isLoadingNotifications) const CircularProgressIndicator(),
-              if (!isLoadingNotifications && notifications.isEmpty)
-                const Padding(
-                  padding: EdgeInsets.all(20),
-                  child: Text(
-                    "No notifications yet.",
-                    style: TextStyle(color: AppStyles.textLight),
-                  ),
-                ),
-              if (!isLoadingNotifications)
-                ...notifications.map((notification) {
-                  return _notificationTile(
-                    _notificationIcon(notification['type']),
-                    notification['title'] ?? 'Notification',
-                    notification['message'] ?? '',
-                  );
-                }).toList(),
-            ],
-          ),
+            );
+          },
         );
       },
     );
@@ -262,49 +345,6 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
 
-  Widget _notificationTile(IconData icon, String title, String subtitle) {
-    return Container(
-      margin: const EdgeInsets.only(bottom: 12),
-      padding: const EdgeInsets.all(14),
-      decoration: BoxDecoration(
-        color: AppStyles.primaryLight,
-        borderRadius: BorderRadius.circular(20),
-      ),
-      child: Row(
-        children: [
-          CircleAvatar(
-            backgroundColor: AppStyles.primary,
-            child: Icon(icon, color: Colors.white, size: 20),
-          ),
-          const SizedBox(width: 14),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  title,
-                  style: const TextStyle(
-                    color: AppStyles.textDark,
-                    fontWeight: FontWeight.w900,
-                  ),
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  subtitle,
-                  style: const TextStyle(
-                    color: AppStyles.textLight,
-                    fontSize: 13,
-                    height: 1.4,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     final firstLetter = widget.userName.isNotEmpty
@@ -313,6 +353,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
     return Scaffold(
       backgroundColor: AppStyles.background,
+      extendBody: true,
       appBar: AppBar(
         automaticallyImplyLeading: false,
         backgroundColor: Colors.transparent,
@@ -326,26 +367,6 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ),
         actions: [
-          IconButton(
-            icon: Icon(
-              _showSearch ? Icons.close_rounded : Icons.search_rounded,
-              color: AppStyles.textDark,
-            ),
-            onPressed: () {
-              setState(() {
-                _showSearch = !_showSearch;
-
-                if (!_showSearch) {
-                  _searchQuery = '';
-
-                  searchedDevices = [];
-
-                  _searchController.clear();
-                }
-              });
-            },
-          ),
-
           Padding(
             padding: const EdgeInsets.only(right: 4, left: 2),
             child: Stack(
@@ -370,7 +391,6 @@ class _HomeScreenState extends State<HomeScreen> {
                     onPressed: _showNotificationsSheet,
                   ),
                 ),
-
                 Positioned(
                   right: 10,
                   top: 10,
@@ -386,7 +406,6 @@ class _HomeScreenState extends State<HomeScreen> {
               ],
             ),
           ),
-
           Padding(
             padding: const EdgeInsets.only(right: 22, left: 6),
             child: InkWell(
@@ -407,17 +426,13 @@ class _HomeScreenState extends State<HomeScreen> {
         ],
       ),
       body: Container(
-        decoration: AppStyles.pageBackground,
+        width: double.infinity,
+        height: double.infinity,
+        color: AppStyles.background,
         child: _currentIndex == 2
-            ? SearchScreen(
-                userId: widget.userId,
-                userName: widget.userName,
-                userEmail: widget.userEmail,
-              )
-            : _currentIndex == 3
             ? _buildContinueScreen()
             : SingleChildScrollView(
-                padding: const EdgeInsets.all(22),
+                padding: const EdgeInsets.fromLTRB(22, 22, 22, 110),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -502,7 +517,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Widget _buildContinueScreen() {
     return SingleChildScrollView(
-      padding: const EdgeInsets.all(22),
+      padding: const EdgeInsets.fromLTRB(22, 22, 22, 110),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -532,11 +547,7 @@ class _HomeScreenState extends State<HomeScreen> {
     final baseList = showOnlyUnfinished ? unfinishedDevices : recentDevices;
     final list = _filterDevices(baseList);
 
-    if (isLoadingRecent) {
-      return const Center(child: CircularProgressIndicator());
-    }
-
-    if (isSearchingDatabase) {
+    if (isLoadingRecent || isSearchingDatabase) {
       return const Center(child: CircularProgressIndicator());
     }
 
@@ -563,7 +574,7 @@ class _HomeScreenState extends State<HomeScreen> {
             device['deviceid'],
             device['devicename'] ?? 'Unknown Device',
             device['guide_title'] ?? 'Device guide',
-            _formatTimeAgo(device['last_opened']),
+            _formatTimeAgo(device['seconds_ago']),
             device['status'] ?? 'opened',
             device['progresspercent'] ?? 0,
           ),
@@ -766,16 +777,16 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Widget _buildBottomNav() {
     return Container(
-      margin: const EdgeInsets.fromLTRB(20, 0, 20, 30),
-      height: 70,
+      margin: const EdgeInsets.fromLTRB(24, 0, 24, 26),
+      height: 76,
       decoration: BoxDecoration(
-        color: AppStyles.textDark,
-        borderRadius: BorderRadius.circular(26),
+        color: const Color(0xff4a86e8),
+        borderRadius: BorderRadius.circular(30),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.22),
-            blurRadius: 24,
-            offset: const Offset(0, 12),
+            color: Colors.black.withOpacity(0.15),
+            blurRadius: 20,
+            offset: const Offset(0, 8),
           ),
         ],
       ),
@@ -784,8 +795,7 @@ class _HomeScreenState extends State<HomeScreen> {
         children: [
           _navIcon(Icons.home_rounded, 0),
           _navIcon(Icons.document_scanner_rounded, 1),
-          _navIcon(Icons.search_rounded, 2),
-          _navIcon(Icons.playlist_add_check_rounded, 3),
+          _navIcon(Icons.playlist_add_check_rounded, 2),
           _navIcon(Icons.settings_rounded, 4),
         ],
       ),
@@ -794,6 +804,8 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Widget _navIcon(IconData icon, int index) {
     final isSelected = _currentIndex == index;
+    final activeColor = const Color(0xff0d3c85);
+    final inactiveColor = Colors.white.withOpacity(0.7);
 
     return GestureDetector(
       onTap: () {
@@ -811,19 +823,21 @@ class _HomeScreenState extends State<HomeScreen> {
           _currentIndex = index;
         });
       },
+      behavior: HitTestBehavior.opaque,
       child: AnimatedContainer(
-        duration: const Duration(milliseconds: 300),
-        padding: const EdgeInsets.all(12),
+        duration: const Duration(milliseconds: 350),
+        curve: Curves.easeInOutCubic,
+        padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 8),
         decoration: BoxDecoration(
           color: isSelected
-              ? AppStyles.primary.withOpacity(0.22)
+              ? Colors.white.withOpacity(0.25)
               : Colors.transparent,
-          borderRadius: BorderRadius.circular(18),
+          borderRadius: BorderRadius.circular(20),
         ),
         child: Icon(
           icon,
-          color: isSelected ? AppStyles.primary : Colors.white54,
-          size: 27,
+          color: isSelected ? activeColor : inactiveColor,
+          size: 26,
         ),
       ),
     );

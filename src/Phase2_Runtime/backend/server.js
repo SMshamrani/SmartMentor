@@ -5,8 +5,16 @@ const multer = require('multer');
 const fs = require('fs');
 const OpenAI = require('openai');
 const bcrypt = require('bcrypt');
+const cloudinary = require('cloudinary').v2;
 
 require('dotenv').config();
+
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET,
+});
+
 
 const app = express();
 
@@ -268,22 +276,20 @@ app.post('/scan-printer', upload.single('image'), async (req, res) => {
     // NOT FOUND → ASK LLM
     // =========================
 
-    const llmResponse = await client.responses.create({
-      model: 'gpt-4.1-mini',
-      input: `
-Generate complete structured device data for this device model:
+const llmResponse = await client.responses.create({
+  model: 'gpt-4.1-mini',
+  input: `
+Generate complete structured data for this device:
 
 ${printerModel}
 
-Return JSON only.
-Do not use markdown.
-Do not use code blocks.
+Return ONLY valid JSON.
 
 Use exactly this structure:
 
 {
-  "device_name": "${printerModel}",
-  "device_type": "Device",
+  "device_name": "",
+  "device_type": "",
   "components": [
     {
       "component_name": "",
@@ -291,7 +297,7 @@ Use exactly this structure:
     }
   ],
   "guide": {
-    "title": "${printerModel} Setup and Troubleshooting Guide",
+    "title": "",
     "steps": [
       {
         "step_number": 1,
@@ -301,13 +307,45 @@ Use exactly this structure:
   }
 }
 
-Requirements:
-- Include 5 to 8 realistic device components.
-- Include 6 to 10 setup/troubleshooting steps.
-- Steps must be beginner friendly.
+Rules:
+- device_name must be formatted as:
+  Brand + Series Name + Model Number Only.
+
+Examples:
+Canon PIXMA G3411
+HP LaserJet M404dn
+Brother HL-L2365DW
+Epson EcoTank L3250
+
+- Do NOT add extra words like:
+  printer, device, model, guide, series.
+
+- device_type must be the REAL type of the device.
+
+Examples:
+Printer
+Smartphone
+Laptop
+Camera
+Router
+Monitor
+Speaker
+
+- If the device is a printer,
+  device_type MUST be:
+  "Printer"
+
+- guide.title must be:
+  device_name + " Setup and Troubleshooting Guide"
+
+- Include 5 to 8 realistic components.
+- Include 6 to 10 beginner-friendly setup or troubleshooting steps.
+- No markdown.
+- No code block.
 - Return valid JSON only.
 `,
-    });
+});
+   
 
     let generatedGuideText = llmResponse.output_text.trim();
 
@@ -541,7 +579,7 @@ app.post('/user-progress/open-device', async (req, res) => {
       const updated = await pool.query(
         `
         UPDATE userprogress
-        SET updatedat = CURRENT_TIMESTAMP,
+        SET updatedat = CURRENT_TIMESTAMP AT TIME ZONE 'UTC',
             status = 'opened'
         WHERE userid = $1 AND deviceid = $2
         RETURNING *
@@ -560,7 +598,7 @@ app.post('/user-progress/open-device', async (req, res) => {
       `
       INSERT INTO userprogress
       (userid, deviceid, progresspercent, status, updatedat)
-      VALUES ($1, $2, 0, 'opened', CURRENT_TIMESTAMP)
+      VALUES ($1, $2, 0, 'opened', CURRENT_TIMESTAMP AT TIME ZONE 'UTC')
       RETURNING *
       `,
       [userId, deviceId]
@@ -593,22 +631,23 @@ app.get('/users/:userId/recent-devices', async (req, res) => {
     const result = await pool.query(
       `
       SELECT
-        d.deviceid,
-        d.devicename,
-        d.devicetype,
-        g.guideid,
-        g.title AS guide_title,
-        up.progresspercent,
-        up.status,
-        up.updatedat AS last_opened
-      FROM userprogress up
-      JOIN devices d
-        ON up.deviceid = d.deviceid
-      LEFT JOIN guides g
-        ON d.deviceid = g.deviceid
-      WHERE up.userid = $1
-      ORDER BY up.updatedat DESC
-      LIMIT 10
+  d.deviceid,
+  d.devicename,
+  d.devicetype,
+  g.guideid,
+  g.title AS guide_title,
+  up.progresspercent,
+  up.status,
+  up.updatedat AS last_opened,
+  EXTRACT(EPOCH FROM (CURRENT_TIMESTAMP - up.updatedat))::INT AS seconds_ago
+FROM userprogress up
+JOIN devices d
+  ON up.deviceid = d.deviceid
+LEFT JOIN guides g
+  ON d.deviceid = g.deviceid
+WHERE up.userid = $1
+ORDER BY up.updatedat DESC
+LIMIT 10
       `,
       [userId]
     );
@@ -659,7 +698,7 @@ app.post('/user-progress/update', async (req, res) => {
         UPDATE userprogress
         SET progresspercent = $1,
             status = $2,
-            updatedat = CURRENT_TIMESTAMP
+            updatedat = CURRENT_TIMESTAMP AT TIME ZONE 'UTC'
         WHERE userid = $3 AND deviceid = $4
         RETURNING *
         `,
@@ -681,7 +720,7 @@ app.post('/user-progress/update', async (req, res) => {
       `
       INSERT INTO userprogress
       (userid, deviceid, progresspercent, status, updatedat)
-      VALUES ($1, $2, $3, $4, CURRENT_TIMESTAMP)
+      VALUES ($1, $2, $3, $4, CURRENT_TIMESTAMP AT TIME ZONE 'UTC')
       RETURNING *
       `,
       [
@@ -864,7 +903,7 @@ app.get('/users/:userId/notifications', async (req, res) => {
     });
 
     const aiGenerated = await pool.query(
-  `
+      `
   SELECT d.devicename, up.updatedat
   FROM userprogress up
   JOIN devices d ON up.deviceid = d.deviceid
@@ -873,19 +912,19 @@ app.get('/users/:userId/notifications', async (req, res) => {
   ORDER BY up.updatedat DESC
   LIMIT 3
   `,
-  [userId]
-);
+      [userId]
+    );
 
-aiGenerated.rows.forEach((row) => {
-  notifications.push({
-    type: 'New AI guide generated',
-    title: 'New AI guide generated',
-    message: `A new AI guide was generated for ${row.devicename}.`,
-    date: row.updatedat,
-  });
-});
+    aiGenerated.rows.forEach((row) => {
+      notifications.push({
+        type: 'New AI guide generated',
+        title: 'New AI guide generated',
+        message: `A new AI guide was generated for ${row.devicename}.`,
+        date: row.updatedat,
+      });
+    });
 
-    
+
 
     const incomplete = await pool.query(
       `
@@ -1028,8 +1067,8 @@ app.post('/generate-device-guide', async (req, res) => {
     // GENERATE DEVICE DATA WITH AI
     // ===================================
 
-    const prompt = `
-Generate complete structured device data for this device:
+const prompt = `
+Generate complete structured data for this device:
 
 ${deviceName}
 
@@ -1038,8 +1077,8 @@ Return ONLY valid JSON.
 Use exactly this structure:
 
 {
-  "device_name": "${deviceName}",
-  "device_type": "Device",
+  "device_name": "",
+  "device_type": "",
   "components": [
     {
       "component_name": "",
@@ -1047,7 +1086,7 @@ Use exactly this structure:
     }
   ],
   "guide": {
-    "title": "${deviceName} Setup and Troubleshooting Guide",
+    "title": "",
     "steps": [
       {
         "step_number": 1,
@@ -1057,10 +1096,21 @@ Use exactly this structure:
   }
 }
 
-Requirements:
-- Include 5 to 8 realistic device components.
-- Include 6 to 10 setup or troubleshooting steps.
-- Beginner friendly explanations.
+Rules:
+- device_name must be formatted as:
+  Brand + Series Name + Model Number Only.
+
+Examples:
+Canon PIXMA G3411
+HP LaserJet M404dn
+Brother HL-L2365DW
+Epson EcoTank L3250
+- Do not write extra words like printer, device, guide, or series in device_name.
+- device_type must be the actual type, such as: Printer, Smartphone, Router, Camera, Laptop, Monitor, Speaker.
+- If the device is a printer, device_type must be "Printer".
+- guide.title must be: device_name + " Setup and Troubleshooting Guide".
+- Include 5 to 8 realistic components.
+- Include 6 to 10 beginner-friendly setup or troubleshooting steps.
 - No markdown.
 - No code block.
 - Valid JSON only.
@@ -1203,6 +1253,57 @@ Requirements:
 
       message: 'Server Error',
     });
+  }
+});
+
+// =========================
+// SAVE DEVICE IMAGE
+// =========================
+
+app.post('/device-images', upload.single('image'), async (req, res) => {
+  try {
+    const { deviceId, deviceName, imageNumber } = req.body;
+
+    if (!deviceId || !req.file) {
+      return res.status(400).json({
+        success: false,
+        message: 'deviceId and image are required',
+      });
+    }
+
+    const cleanName = (deviceName || 'device').replace(/\s+/g, '_');
+    const publicId = `smartmentor/${cleanName}_${imageNumber ?? 1}_${Date.now()}`;
+
+    const result = await cloudinary.uploader.upload(req.file.path, {
+      public_id: publicId,
+      resource_type: 'image',
+    });
+
+    const imageUrl = result.secure_url;
+
+    const nextImageNumber = await pool.query(
+      `SELECT COALESCE(MAX(imagenumber), 0) + 1 AS next FROM deviceimages WHERE deviceid = $1`,
+      [deviceId]
+    );
+    const nextNum = nextImageNumber.rows[0].next;
+
+    const dbResult = await pool.query(
+      `INSERT INTO deviceimages (deviceid, imageurl, imagenumber)
+   VALUES ($1, $2, $3) RETURNING *`,
+      [deviceId, imageUrl, nextNum]
+    );
+
+    fs.unlinkSync(req.file.path);
+
+    return res.status(201).json({
+      success: true,
+      image: dbResult.rows[0],
+      imageUrl,
+    });
+
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ success: false, message: 'Server Error' });
   }
 });
 

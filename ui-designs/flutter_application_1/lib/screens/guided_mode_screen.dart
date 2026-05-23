@@ -315,7 +315,9 @@ class _GuidedModeScreenState extends State<GuidedModeScreen>
                               onPressed: () => Navigator.pop(context),
                             ),
                           ),
+
                           const SizedBox(width: 14),
+
                           Expanded(
                             child: Text(
                               deviceName,
@@ -325,6 +327,19 @@ class _GuidedModeScreenState extends State<GuidedModeScreen>
                                 fontWeight: FontWeight.w900,
                                 color: AppStyles.textDark,
                               ),
+                            ),
+                          ),
+
+                          const SizedBox(width: 10),
+
+                          CircleAvatar(
+                            backgroundColor: AppStyles.primary,
+                            child: IconButton(
+                              icon: const Icon(
+                                Icons.home_rounded,
+                                color: Colors.white,
+                              ),
+                              onPressed: _goHome,
                             ),
                           ),
                         ],
