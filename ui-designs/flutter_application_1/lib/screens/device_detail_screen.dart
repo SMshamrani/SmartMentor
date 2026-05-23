@@ -14,6 +14,7 @@ class DeviceDetailScreen extends StatefulWidget {
 
 class _DeviceDetailScreenState extends State<DeviceDetailScreen> {
   bool _isLoading = true;
+  bool _loaded = false;
 
   int deviceId = 0;
   int userId = 1;
@@ -28,21 +29,24 @@ class _DeviceDetailScreenState extends State<DeviceDetailScreen> {
 
   List<dynamic> steps = [];
 
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
+ @override
+void didChangeDependencies() {
+  super.didChangeDependencies();
 
-    final args =
-        ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>?;
+  if (_loaded) return;
+  _loaded = true;
 
-    deviceId = args?['deviceId'] ?? 0;
-    userId = args?['userId'] ?? 0;
-    userName = args?['userName'] ?? 'User';
-    userEmail = args?['userEmail'] ?? '';
-    source = args?['source'] ?? 'database';
-    _loadGuide();
-  }
+  final args =
+      ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>?;
 
+  deviceId = args?['deviceId'] ?? 0;
+  userId = args?['userId'] ?? 1;
+  userName = args?['userName'] ?? 'User';
+  userEmail = args?['userEmail'] ?? '';
+  source = args?['source'] ?? 'database';
+
+  _loadGuide();
+}
   Future<void> _loadGuide() async {
     try {
       final response = await http.get(
@@ -103,16 +107,7 @@ class _DeviceDetailScreenState extends State<DeviceDetailScreen> {
                                 color: Colors.white,
                               ),
                               onPressed: () {
-                                Navigator.pushNamedAndRemoveUntil(
-                                  context,
-                                  '/home',
-                                  (route) => false,
-                                  arguments: {
-                                    'userId': userId,
-                                    'userName': userName,
-                                    'userEmail': userEmail,
-                                  },
-                                );
+                                Navigator.pop(context);
                               },
                             ),
                           ),
