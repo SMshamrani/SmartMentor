@@ -1,231 +1,310 @@
-SmartMentor Arduino Guide System is an educational data pipeline built around the Arduino UNO R3, designed as part of a graduation project. It focuses on transforming scraped reference data and images into clean, structured resources that can support guide-style and future intelligent mentoring applications.
+# SmartMentor
 
-## Project Overview
+## AI-Powered Device Guidance Platform
 
-SmartMentor aims to bridge the gap between traditional device manuals and practical, hands-on guidance by organizing and preparing high‑quality reference data about Arduino UNO R3. The current repository focuses on Phase 1 of the system: offline processing of structured tabular data and curated visual resources. Future extensions can integrate this data into an AI‑powered mobile app for interactive assistance.
+SmartMentor is an intelligent mobile application designed to bridge the gap between traditional device manuals and practical hands-on guidance using Artificial Intelligence (AI), Computer Vision, and Large Language Models (LLMs).
 
-The system is implemented as a reproducible Python pipeline with two primary parts:
+The system enables users to scan electronic devices using their mobile camera, automatically recognize the device model, and generate interactive setup and troubleshooting guides in real time.
 
-- Phase 1: Offline data processing (scraped XLSX/CSV → structured JSON + SQL).
-- Image setup: Downloading and generating Arduino‑related images and metadata.
+SmartMentor aims to simplify device usage, reduce user frustration, and provide accessible step-by-step assistance without requiring technical expertise.
 
-Repository URL:  
-`https://github.com/SMshamrani/SmartMentor`
+---
 
-## Features
+# Project Overview
 
-- Load Arduino UNO reference data from XLSX and CSV files.
-- Clean raw records and convert them into a device‑centered JSON structure.
-- Map the data to a relational schema and generate SQL INSERT statements.
-- Download real Arduino board, component, and pinout images from open sources.
-- Generate realistic mock images when online images are unavailable.
-- Build a metadata file summarizing all images (paths, size, dimensions, category).
-- Include optional experimental pipelines for image classification, web search, and LLM‑based text classification (kept separate from the core Phase 1 flow).
+Traditional user manuals and online tutorials are often difficult to follow, time-consuming, and not personalized to the user's exact device or current problem.
 
-## Project Structure
+SmartMentor solves this challenge by combining:
+
+- Computer Vision for device recognition
+- AI-generated troubleshooting and setup guides
+- Cloud database integration
+- Personalized user progress tracking
+- Mobile-first interactive experience
+
+The platform is designed to support multiple device categories such as:
+
+- Printers
+- Smartphones
+- Laptops
+- Routers
+- Cameras
+- Smart devices
+- Future IoT devices
+
+---
+
+# Features
+
+- AI-powered device recognition using images
+- Automatic guide generation using LLMs
+- Real-time device scanning
+- Cloud PostgreSQL database
+- Personalized recent devices history
+- User progress tracking
+- Feedback and rating system
+- Smart search functionality
+- Notifications system
+- Cloud image upload support
+- Multi-device scalable architecture
+- Flutter mobile application
+- Node.js backend API
+- Secure cloud-based storage
+
+---
+
+# Technologies Used
+
+## Frontend
+- Flutter
+- Dart
+
+## Backend
+- Node.js
+- Express.js
+
+## Database
+- PostgreSQL
+- Supabase
+
+## Artificial Intelligence
+- OpenAI API
+- Computer Vision
+- Large Language Models (LLMs)
+
+## Cloud Services
+- Cloudinary
+
+## Other Technologies
+- REST APIs
+- JSON
+- Git & GitHub
+
+---
+
+# System Architecture
 
 ```text
-SmartMentor/
-├── main.py                      # Entry point for Phase 1 data pipeline
-├── setup_images.py              # Image setup: download/generate images + metadata
-├── config.py                    # Configuration (DB, paths, API keys via .env)
-├── requirements.txt             # Python dependencies
-├── database/
-│   └── schema.sql               # PostgreSQL schema (Users, Devices, Guides, Steps, etc.)
-├── src/
-│   ├── Phase1_OfflineProcessing/
-│   │   ├── data_loader.py               # Load XLSX/CSV and build structured JSON
-│   │   ├── enhanced_data_cleaner.py     # Clean/map data and generate SQL + reports
-│   │   ├── web_scraper_images.py        # Scrape images from Arduino Docs (optional)
-│   │   └── arduino_project_image_scraper.py  # Scrape example project images (optional)
-│   └── database_handler.py      # Optional: database connection and inserts
-├── scripts/
-│   └── setup_data.py            # Legacy/extended data setup (experimental)
-├── data/
-│   ├── raw/                     # Raw input files (XLSX, CSV, scraped JSON)
-│   ├── processed/               # Processed JSON and text outputs
-│   ├── scraped_images/          # Downloaded + generated images
-│   ├── classified_images/       # (Optional) classified images by category
-│   ├── image_sources/           # Image reports and classification summaries
-│   └── outputs/                 # SQL scripts and summary reports
-└── archive/                     # (Optional) experimental or legacy scripts
+Flutter Mobile App
+        ↓
+Node.js Backend API
+        ↓
+PostgreSQL Cloud Database
+        ↓
+OpenAI API (AI + Vision)
+        ↓
+Cloudinary Image Storage
 ```
 
-## Installation
+---
 
-Clone the repository:
+# Main Functionalities
+
+## 1. User Authentication
+
+Users can:
+- Create accounts
+- Login securely
+- Access personalized device history
+
+---
+
+## 2. Device Scanning
+
+Users can scan devices using the mobile camera.
+
+The system:
+- Detects the device model
+- Searches the database
+- Generates AI-based guides if the device does not exist
+
+---
+
+## 3. AI Guide Generation
+
+If a device is not available in the database:
+
+- AI automatically generates:
+  - Device information
+  - Components
+  - Troubleshooting steps
+  - Setup instructions
+
+The generated guide is then stored permanently in the database.
+
+---
+
+## 4. Personalized User Experience
+
+The system tracks:
+- Recent devices
+- User progress
+- Completed guides
+- Incomplete guides
+- User feedback
+
+---
+
+# Database Tables
+
+The system database contains the following main tables:
+
+- Users
+- Devices
+- DeviceImages
+- Components
+- Guides
+- Steps
+- UserProgress
+- Feedback
+
+---
+
+# Installation
+
+## Clone Repository
 
 ```bash
 git clone https://github.com/SMshamrani/SmartMentor.git
 cd SmartMentor
 ```
 
-Create and activate a virtual environment (recommended):
+---
+
+# Backend Setup
+
+## Navigate to backend
 
 ```bash
-python -m venv .venv
-# Windows:
-.venv\Scripts\activate
-# macOS / Linux:
-source .venv/bin/activate
+cd src/Phase2_Runtime/backend
 ```
 
-Install dependencies:
+## Install dependencies
 
 ```bash
-pip install -r requirements.txt
+npm install
 ```
 
-Create a `.env` file in the project root (optional, for database/API configuration):
+## Create `.env` file
+
+```env
+OPENAI_API_KEY=your_openai_key
+
+DATABASE_URL=your_postgresql_connection
+
+CLOUDINARY_CLOUD_NAME=your_cloud_name
+CLOUDINARY_API_KEY=your_api_key
+CLOUDINARY_API_SECRET=your_api_secret
+```
+
+## Run backend server
+
+```bash
+node server.js
+```
+
+Server runs on:
 
 ```text
-DB_NAME=arduino_db
-DB_USER=postgres
-DB_PASSWORD=password
-DB_HOST=localhost
-DB_PORT=5432
-
-# Optional for experimental LLM / search modules
-OPENAI_API_KEY=your_openai_key_here
-SERPAPI_KEY=your_serpapi_key_here
+http://localhost:3000
 ```
 
-## Usage
+---
 
-### 1. Phase 1 Data Pipeline
+# Flutter Setup
 
-This pipeline loads raw tabular data about Arduino UNO from XLSX/CSV files and converts it into structured JSON.
-
-Run:
+## Navigate to Flutter application
 
 ```bash
-python main.py
+cd ui-designs/flutter_application_1
 ```
 
-This will:
-
-- Read `data/raw/scraped_data/arduino_uno_raw.xlsx`
-- Read `data/raw/scraped_data/arduino_uno_raw.csv`
-- Merge and de‑duplicate rows
-- Produce `data/processed/arduino_uno_structured.json`
-
-To run the enhanced cleaning, mapping, and SQL generation:
+## Install Flutter packages
 
 ```bash
-python -m src.Phase1_OfflineProcessing.enhanced_data_cleaner
+flutter pub get
 ```
 
-This script will:
-
-- Clean and normalize the raw data.
-- Map it into a schema‑like structure (`Devices`, `Components`, `Guides`, `Steps`).
-- Save:
-  - `data/processed/cleaned_data_enhanced.json`
-  - `data/outputs/database_inserts_complete.sql`
-  - `data/outputs/data_cleaning_summary_enhanced.json`
-
-### 2. Image Setup Pipeline
-
-This pipeline prepares the visual resources used in the project (real images + generated mockups + metadata).
-
-Run:
+## Run application
 
 ```bash
-python setup_images.py
+flutter run
 ```
 
-It will:
+---
 
-- Create all required image directories under `data/scraped_images/` and `data/classified_images/`.
-- Attempt to download real Arduino board, component, and pinout images.
-- If downloads fail, generate realistic board/component/pinout mock images.
-- Copy any existing images from common project folders into the unified structure.
-- Build `data/scraped_images/metadata.json` with per‑image metadata and category counts.
+# API Endpoints
 
-### 3. Optional / Experimental Pipelines
+## Authentication
+- `POST /users`
+- `POST /login`
 
-These scripts are not required for the core Phase 1 pipeline but are included for experimentation and future work:
+## Device Scanning
+- `POST /scan-printer`
 
-- `scripts/setup_data.py`: extended data setup (data loading + GitHub images + Arduino Docs scraping).
-- `main_updated.py`: experimental full pipeline (image collection, classification, web search, LLM classification, comparison).
-- `src/database_handler.py`: connect to PostgreSQL, create tables using `database/schema.sql`, and insert scraped / classified data.
+## Device Guides
+- `GET /devices/:id/guide`
 
-If you use these components, ensure that:
+## Search
+- `GET /devices/search`
 
-- PostgreSQL is running with credentials matching your `.env` file or the default values.
-- Optional APIs (OpenAI, SERPAPI) are configured when using LLM‑based modules.
+## User Progress
+- `POST /user-progress/open-device`
+- `POST /user-progress/update`
 
-## Database Schema
+## Notifications
+- `GET /users/:userId/notifications`
 
-The database schema is defined in `database/schema.sql` and includes the following main tables:
+## Feedback
+- `POST /feedback`
 
-- `Users`: future user accounts for authentication and progress tracking.
-- `Devices`: Arduino boards and similar hardware devices.
-- `Components`: electronic components associated with each device.
-- `Guides`: tutorials or learning paths per device.
-- `Steps`: step‑by‑step instructions inside each guide.
-- `UserProgress`: tracks a user’s progress through guides and steps.
-- `Feedback`: user ratings and comments associated with guides.
+## AI Device Generation
+- `POST /generate-device-guide`
 
-The `enhanced_data_cleaner.py` script generates SQL INSERT statements aligned with this schema and writes them to `data/outputs/database_inserts_complete.sql` for easy database population.
+---
 
-## Configuration
+# Security Features
 
-Global configuration is centralized in `config.py`:
+- Password hashing using bcrypt
+- Environment variable protection using `.env`
+- Cloud database security
+- Row Level Security (RLS)
+- API key protection
+- Secure backend architecture
 
-- Database connection parameters (read from environment variables with sensible defaults).
-- Data directories (`data/raw`, `data/processed`, `data/scraped_images`).
-- Optional API keys (`OPENAI_API_KEY`, `SERPAPI_KEY`) for experimental modules.
+---
 
-To ensure required data folders exist, you can call:
+# Future Enhancements
 
-```python
-from config import Config
-Config.ensure_directories()
-```
+- Multi-language support
+- Voice assistant integration
+- Augmented Reality (AR) guidance
+- Advanced AI troubleshooting
+- Device recommendation system
+- Analytics dashboard
+- Admin control panel
+- Real-time notifications
+- Expanded IoT device support
 
-(Several scripts already perform this internally.)
+---
 
-## Requirements
+# Contributors
 
-Key dependencies include:
+- Sarah Mohammad Alshamrani — 444003567
+- Waad Mohammad Al luhaybi — 444001927
+- Shahad Hassan Altalhi — 444001817
+- Reem Ahmad Alharbi — 444003905
 
-- `pandas`, `numpy` – data loading and processing.
-- `openpyxl` – Excel file support for `pandas`.
-- `requests`, `beautifulsoup4`, `lxml` – web scraping utilities.
-- `Pillow` – image verification and mock image generation.
-- `python-dotenv` – environment variable loading from `.env`.
+---
 
-Optional dependencies for extended functionality:
+# Supervisor
 
-- `psycopg2-binary`, `sqlalchemy` – PostgreSQL integration.
-- `openai`, `googlesearch-python`, `selenium`, `opencv-python`, `scikit-image` – experimental LLM, search, and advanced image processing.
+Dr. Daren FadolAlkarim
 
-All dependencies are listed in `requirements.txt`.
+---
 
-## Running Tests (Optional)
+# License
 
-If you add or maintain tests, they can be executed with:
+This project is developed for academic and educational purposes as part of a graduation project.
 
-```bash
-pytest
-```
-
-Ensure that your virtual environment is active and all required dependencies are installed.
-
-## Contributors
-
-This project was developed as a graduation project by:
-
-- Student 1 – Sarah Mohammad Alshamrani   444003567 
-- Student 2 – Waad Mohammad AL luhaybi   444001927 
-- Student 3 – Shahad Hassan Altalhi    444001817
-- Student 4 – Reem Ahmad Alharbi   444003905
-  
-- Supervisor: Dr. Daren FadolAlkarim
-
-
-## License
-
-This project is licensed under the MIT License.  
-See the `LICENSE` file in the repository root for full license text.
+---
