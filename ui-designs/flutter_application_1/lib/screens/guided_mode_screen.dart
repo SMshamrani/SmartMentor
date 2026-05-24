@@ -18,6 +18,7 @@ class _GuidedModeScreenState extends State<GuidedModeScreen>
   int userId = 1;
   int deviceId = 0;
   int guideId = 0;
+  int startIndex = 0;
 
   String userName = 'User';
   String userEmail = '';
@@ -50,6 +51,7 @@ class _GuidedModeScreenState extends State<GuidedModeScreen>
   void initState() {
     super.initState();
 
+
     _partyController = AnimationController(
       vsync: this,
       duration: const Duration(seconds: 2),
@@ -67,9 +69,9 @@ class _GuidedModeScreenState extends State<GuidedModeScreen>
   void didChangeDependencies() {
     super.didChangeDependencies();
 
-    final args =
-        ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
-
+   final args = (ModalRoute.of(context)?.settings.arguments as Map)
+    .cast<String, dynamic>();
+    
     userId = args['userId'] ?? 1;
     userName = args['userName'] ?? 'User';
     userEmail = args['userEmail'] ?? '';
@@ -80,6 +82,19 @@ class _GuidedModeScreenState extends State<GuidedModeScreen>
     deviceName = args['deviceName'] ?? 'Printer';
     guideTitle = args['guideTitle'] ?? 'Guided Mode';
     steps = args['steps'] ?? [];
+
+  if (steps.isNotEmpty) {
+  currentIndex = (args['currentStep'] ?? 0)
+      .clamp(0, steps.length - 1);
+
+  completedSteps = currentIndex;
+}
+
+ else {
+  startIndex = 0;
+  currentIndex = 0;
+  completedSteps = 0;
+}
   }
 
   Future<void> _saveProgress({
@@ -97,6 +112,7 @@ class _GuidedModeScreenState extends State<GuidedModeScreen>
           'deviceId': deviceId,
           'progressPercent': percent,
           'status': status,
+          'currentStep': currentIndex,
         }),
       );
     } catch (_) {}
@@ -123,40 +139,47 @@ class _GuidedModeScreenState extends State<GuidedModeScreen>
     } catch (_) {}
   }
 
-  Future<void> _nextStep() async {
-    if (completedSteps < currentIndex + 1) {
-      completedSteps = currentIndex + 1;
-    }
 
-    final bool isLastStep = currentIndex == steps.length - 1;
-
-    if (isLastStep) {
-      await _saveProgress(percent: 100, status: 'completed');
-
-      if (!mounted) return;
-
-      _partyController.forward(from: 0);
-      _showCompletedDialog();
-      return;
-    }
-
-    final nextPercent = ((completedSteps / steps.length) * 100).round();
-
-    await _saveProgress(percent: nextPercent, status: 'in_progress');
-
-    setState(() {
-      currentIndex++;
-    });
-  }
 
   void _previousStep() {
     if (currentIndex == 0) return;
 
     setState(() {
       currentIndex--;
+      completedSteps = currentIndex + 1;
     });
   }
+  Future<void> _nextStep() async {
+  final nextStep = currentIndex + 1;
 
+  final isLastStep = currentIndex >= steps.length - 1;
+
+  if (isLastStep) {
+    setState(() {
+      completedSteps = steps.length;
+    });
+
+    await _saveProgress(percent: 100, status: 'completed');
+
+    _partyController.forward(from: 0);
+
+    _showCompletedDialog();
+    return;
+  }
+
+  setState(() {
+    currentIndex = nextStep;
+    completedSteps = nextStep;
+  });
+
+  final nextPercent =
+    steps.isEmpty ? 0 : ((nextStep / steps.length) * 100).round();
+
+  await _saveProgress(
+    percent: nextPercent,
+    status: 'in_progress',
+  );
+}
   void _goHome() {
     Navigator.pushNamedAndRemoveUntil(
       context,
@@ -269,12 +292,15 @@ class _GuidedModeScreenState extends State<GuidedModeScreen>
                   actions: [
                     ElevatedButton.icon(
                       style: AppStyles.primaryButton,
+
                       onPressed: () async {
                         await _submitFeedback();
 
                         if (!mounted) return;
 
                         Navigator.pop(context);
+                        _goHome();
+                        
                       },
 
                       icon: const Icon(Icons.check_circle_rounded),
@@ -293,7 +319,8 @@ class _GuidedModeScreenState extends State<GuidedModeScreen>
 
   @override
   Widget build(BuildContext context) {
-    final currentStep = steps.isNotEmpty ? steps[currentIndex] : null;
+    final safeIndex = currentIndex.clamp(0, steps.length - 1);
+    final currentStep = steps.isNotEmpty ? steps[safeIndex] : null;
 
     return Scaffold(
       body: Container(
@@ -344,24 +371,7 @@ class _GuidedModeScreenState extends State<GuidedModeScreen>
                           ),
                         ],
                       ),
-                      if (progressPercent == 100)
-                        Padding(
-                          padding: const EdgeInsets.only(top: 14),
-
-                          child: SizedBox(
-                            width: double.infinity,
-
-                            child: ElevatedButton.icon(
-                              style: AppStyles.primaryButton,
-
-                              onPressed: _goHome,
-
-                              icon: const Icon(Icons.home_rounded),
-
-                              label: const Text('Back to Home'),
-                            ),
-                          ),
-                        ),
+                      
                       const SizedBox(height: 24),
                       Container(
                         padding: const EdgeInsets.all(22),
