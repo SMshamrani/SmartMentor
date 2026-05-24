@@ -577,6 +577,7 @@ class _HomeScreenState extends State<HomeScreen> {
             _formatTimeAgo(device['seconds_ago']),
             device['status'] ?? 'opened',
             device['progresspercent'] ?? 0,
+            device['current_step'] ?? 0,
           ),
       ],
     );
@@ -665,6 +666,7 @@ class _HomeScreenState extends State<HomeScreen> {
     String time,
     String source,
     int progressPercent,
+    int currentStep,
   ) {
     return InkWell(
       borderRadius: BorderRadius.circular(24),
@@ -686,6 +688,10 @@ class _HomeScreenState extends State<HomeScreen> {
             'userId': widget.userId,
             'userName': widget.userName,
             'userEmail': widget.userEmail,
+
+            'progressPercent': progressPercent,
+            'resume': true,
+            'currentStep': currentStep,
           },
         ).then((_) => _loadRecentDevices());
       },
