@@ -15,10 +15,13 @@ class DeviceDetailScreen extends StatefulWidget {
 class _DeviceDetailScreenState extends State<DeviceDetailScreen> {
   bool _isLoading = true;
   bool _loaded = false;
+  bool resume = false;
 
+  int progress = 0;
   int deviceId = 0;
   int userId = 1;
   int guideId = 0;
+  int currentStep = 0;
 
   String userName = 'User';
   String userEmail = '';
@@ -44,6 +47,10 @@ void didChangeDependencies() {
   userName = args?['userName'] ?? 'User';
   userEmail = args?['userEmail'] ?? '';
   source = args?['source'] ?? 'database';
+  currentStep = args?['currentStep'] ?? 0;
+  progress = args?['progressPercent'] ?? 0;
+  
+  resume = args?['resume'] ?? false;
 
   _loadGuide();
 }
@@ -60,6 +67,16 @@ void didChangeDependencies() {
         guideId = data['guide']['guideid'];
         guideTitle = data['guide']['title'];
         steps = data['steps'];
+
+        if (resume && steps.isNotEmpty) {
+        currentStep =
+             ((progress / 100) * steps.length).floor();
+
+      if (currentStep >= steps.length) {
+        currentStep = steps.length - 1;
+  }
+}
+
         _isLoading = false;
       });
     } catch (e) {
@@ -186,6 +203,8 @@ void didChangeDependencies() {
                               child: ElevatedButton.icon(
                                 style: AppStyles.primaryButton,
                                 onPressed: () {
+                                  
+
                                   Navigator.pushNamed(
                                     context,
                                     '/guided-mode',
@@ -198,6 +217,9 @@ void didChangeDependencies() {
                                       'guideTitle': guideTitle,
                                       'guideId': guideId,
                                       'steps': steps,
+                                      'progressPercent': progress,
+                                       resume: progress > 0 && progress < 100,
+                                      'currentStep': currentStep,
                                     },
                                   );
                                 },
